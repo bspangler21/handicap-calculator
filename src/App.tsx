@@ -1,5 +1,5 @@
 import "./App.css";
-import { makeStyles, tokens } from "@fluentui/react-components";
+import { makeStyles, tokens, Text } from "@fluentui/react-components";
 
 const useStyles = makeStyles({
 	pageContainer: {
@@ -28,6 +28,11 @@ const useStyles = makeStyles({
 		width: "100%",
 		boxSizing: "border-box",
 	},
+  headerText: {
+    fontSize: "600",
+    color: "#FFFFFF",
+    weight: "semibold",
+  },
 	footer: {
 		display: "flex",
 		flexDirection: "row",
@@ -47,10 +52,17 @@ function App() {
 
 	return (
 		<div className={styles.pageContainer}>
-			<div className={styles.header}></div>
-			<div className={styles.contentContainer}>
-				<p>Click on the Vite and React logos to learn more</p>
+			<div className={styles.header}>
+				<Text
+					weight="semibold"
+					size={600}
+					className={styles.headerText}
+					style={{ flexShrink: 0, padding: "10px"}}
+				>
+					Golf Handicap Calculator
+				</Text>
 			</div>
+			<div className={styles.contentContainer}></div>
 			<div className={styles.footer}></div>
 		</div>
 	);
