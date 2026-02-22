@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fluentui/react-components": "^9.73.0",
+    "@fluentui/react-icons": "^2.0.319",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
