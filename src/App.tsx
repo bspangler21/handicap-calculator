@@ -2,34 +2,47 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { makeStyles, tokens } from '@fluentui/react-components';
+
+const useStyles = makeStyles({
+	pageContainer: {
+		display: "flex",
+		height: "100%",
+    margin: 0,
+	},
+	contentContainer: {
+		display: "flex",
+		flexDirection: "column",
+		width: "100%",
+		height: "100%",
+		boxSizing: "border-box",
+	},
+	header: {
+		display: "flex",
+		flexDirection: "row",
+		flexWrap: "wrap",
+		justifyContent: "space-between",
+		alignItems: "center",
+		backgroundColor: tokens.colorBrandBackground,
+		color: "#FFFFFF",
+		// padding: "8px 16px",
+		minHeight: "50px",
+		// minWidth: "100vw",
+		boxSizing: "border-box",
+	},
+});
 
 function App() {
-  const [count, setCount] = useState(0)
+  const styles = useStyles();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+			<div className={styles.pageContainer}>
+				<div className={styles.contentContainer}>
+					<div className={styles.header}></div>
+					<p>Click on the Vite and React logos to learn more</p>
+				</div>
+			</div>
+	);
 }
 
 export default App
