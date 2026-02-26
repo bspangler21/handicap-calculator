@@ -1,5 +1,9 @@
 import "./App.css";
-import { makeStyles, tokens, Text } from "@fluentui/react-components";
+import {
+	makeStyles,
+	tokens,
+	Text,
+} from "@fluentui/react-components";
 
 const useStyles = makeStyles({
 	pageContainer: {
@@ -15,6 +19,7 @@ const useStyles = makeStyles({
 		width: "100%",
 		height: "100%",
 		boxSizing: "border-box",
+		padding: "20px",
 	},
 	header: {
 		display: "flex",
@@ -50,6 +55,10 @@ const useStyles = makeStyles({
 function App() {
 	const styles = useStyles();
 
+	// const columns = [
+	// 	createTableColumn()
+	// ]
+
 	return (
 		<div className={styles.pageContainer}>
 			<div className={styles.header}>
@@ -57,12 +66,24 @@ function App() {
 					weight="semibold"
 					size={600}
 					className={styles.headerText}
-					style={{ flexShrink: 0, padding: "10px"}}
+					style={{ flexShrink: 0, padding: "10px" }}
 				>
 					Golf Handicap Calculator
 				</Text>
 			</div>
-			<div className={styles.contentContainer}></div>
+			<div className={styles.contentContainer}>
+				<table>
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Course Name</th>
+							<th>Course Rating</th>
+							<th>Slope Rating</th>
+							<th>Score</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
 			<div className={styles.footer}></div>
 		</div>
 	);
