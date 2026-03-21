@@ -10,7 +10,7 @@ const useStyles = makeStyles({
 		flexDirection: "column",
 		width: "100%",
 		height: "100%",
-		margin: 0,
+		margin: "0",
 	},
 	contentContainer: {
 		display: "flex",
@@ -31,6 +31,7 @@ const useStyles = makeStyles({
 		minHeight: "50px",
 		width: "100%",
 		boxSizing: "border-box",
+		padding: "0 20px",
 		padding: "10px",
 	},
 	headerText: {
@@ -79,7 +80,12 @@ const EMPTY_ENTRY = (): IEntry => ({
 	courseRating: 0,
 	slopeRating: 0,
 	score: 0,
+	button: {
+		backgroundColor: tokens.colorBrandForeground,
+	},
 });
+
+const testData: IEntry[] = mockScores;
 
 function App() {
 	const styles = useStyles();
@@ -100,12 +106,7 @@ function App() {
 	return (
 		<div className={styles.pageContainer}>
 			<div className={styles.header}>
-				<Text
-					weight="semibold"
-					size={600}
-					className={styles.headerText}
-					style={{ flexShrink: 0, padding: "10px" }}
-				>
+				<Text weight="semibold" size={600} style={{ flexShrink: 0 }}>
 					Golf Handicap Calculator
 				</Text>
 				<Button onClick={newEntry} appearance="secondary" className={styles.button}>
@@ -154,7 +155,6 @@ function App() {
 					</div>
 				))}
 			</div>
-			<div className={styles.footer}></div>
 		</div>
 	);
 }
