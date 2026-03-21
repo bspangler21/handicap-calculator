@@ -1,14 +1,13 @@
 import "./App.css";
-import {
-	makeStyles,
-	tokens,
-	Text,
-} from "@fluentui/react-components";
+import { makeStyles, tokens, Text, Input, Button } from "@fluentui/react-components";
+import { DeleteFilled } from "@fluentui/react-icons";
+import type { IEntry } from "./types/IEntry";
+import React from "react";
 
 const useStyles = makeStyles({
 	pageContainer: {
 		display: "flex",
-    flexDirection: "column",
+		flexDirection: "column",
 		width: "100%",
 		height: "100%",
 		margin: 0,
@@ -32,12 +31,13 @@ const useStyles = makeStyles({
 		minHeight: "50px",
 		width: "100%",
 		boxSizing: "border-box",
+		padding: "10px",
 	},
-  headerText: {
-    fontSize: "600",
-    color: "#FFFFFF",
-    weight: "semibold",
-  },
+	headerText: {
+		fontSize: "600",
+		color: "#FFFFFF",
+		weight: "semibold",
+	},
 	footer: {
 		display: "flex",
 		flexDirection: "row",
@@ -50,14 +50,52 @@ const useStyles = makeStyles({
 		width: "100%",
 		boxSizing: "border-box",
 	},
+	columnHeaderContainer: {
+		display: "flex",
+		flexDirection: "row",
+		width: "100%",
+		boxSizing: "border-box",
+		padding: "5px",
+		gap: "20px",
+	},
+	columnHeader: {
+		width: "20%",
+		textAlign: "center",
+		padding: "5px",
+	},
+	button: {
+		width: "150px",
+		height: "30px",
+	},
+	smallIcon: {
+		fontSize: "32px"
+	}
+});
+
+const EMPTY_ENTRY = (): IEntry => ({
+	id: crypto.randomUUID(),
+	date: new Date(),
+	courseName: "",
+	courseRating: 0,
+	slopeRating: 0,
+	score: 0,
 });
 
 function App() {
 	const styles = useStyles();
+	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
 
-	// const columns = [
-	// 	createTableColumn()
-	// ]
+	const columnHeaders = ["trashIcon", "Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
+
+	const newEntry = (): void => setEntries((prev) => [...prev, EMPTY_ENTRY()]);
+
+	const updateEntry = (id: string, field: keyof IEntry, value: string | number | Date): void => {
+		setEntries((prev) =>
+			prev.map((entry) => (entry.id === id ? { ...entry, [field]: value } : entry))
+		);
+	};
+
+	const removeEntry = (id: string) => setEntries(prev => prev.filter(e => e.id !== id));
 
 	return (
 		<div className={styles.pageContainer}>
@@ -70,19 +108,51 @@ function App() {
 				>
 					Golf Handicap Calculator
 				</Text>
+				<Button onClick={newEntry} appearance="secondary" className={styles.button}>
+					Add Entry
+				</Button>
 			</div>
 			<div className={styles.contentContainer}>
-				<table>
-					<thead>
-						<tr>
-							<th>Date</th>
-							<th>Course Name</th>
-							<th>Course Rating</th>
-							<th>Slope Rating</th>
-							<th>Score</th>
-						</tr>
-					</thead>
-				</table>
+				<div className={styles.columnHeaderContainer}>
+					{columnHeaders.map((header) =>
+						header === "trashIcon" ? (
+							<DeleteFilled />
+						) : (
+							<Text size={300} weight="bold" className={styles.columnHeader}>
+								{header}
+							</Text>
+						)
+					)}
+				</div>
+				{entries.map((entry) => (
+					<div key={entry.id} className={styles.columnHeaderContainer}>
+						<Input
+							value={entry.date.toDateString()}
+							onChange={(e) => updateEntry(entry.id, "date", new Date(e.target.value))}
+							className={styles.columnHeader}
+						/>
+						<Input
+							value={entry.courseName}
+							onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
+							className={styles.columnHeader}
+						/>
+						<Input
+							value={entry.courseRating.toString()}
+							onChange={(e) => updateEntry(entry.id, "courseRating", Number(e.target.value))}
+							className={styles.columnHeader}
+						/>
+						<Input
+							value={entry.slopeRating.toString()}
+							onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
+							className={styles.columnHeader}
+						/>
+						<Input
+							value={entry.score.toString()}
+							onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
+							className={styles.columnHeader}
+						/>
+					</div>
+				))}
 			</div>
 			<div className={styles.footer}></div>
 		</div>
