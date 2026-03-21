@@ -3,6 +3,8 @@ import { makeStyles, tokens, Text, Input, Button } from "@fluentui/react-compone
 import { DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
 import React from "react";
+import { mockScores } from "./mockData/mockScores";
+import { calculateHandicap } from "./lib/util";
 
 const useStyles = makeStyles({
 	pageContainer: {
@@ -31,7 +33,6 @@ const useStyles = makeStyles({
 		minHeight: "50px",
 		width: "100%",
 		boxSizing: "border-box",
-		padding: "0 20px",
 		padding: "10px",
 	},
 	headerText: {
@@ -59,8 +60,13 @@ const useStyles = makeStyles({
 		padding: "5px",
 		gap: "20px",
 	},
+	iconColumn: {
+		width: "40px",
+		minWidth: "40px",
+		flexShrink: 0,
+	},
 	columnHeader: {
-		width: "20%",
+		flex: 1,
 		textAlign: "center",
 		padding: "5px",
 	},
@@ -69,8 +75,9 @@ const useStyles = makeStyles({
 		height: "30px",
 	},
 	smallIcon: {
-		fontSize: "32px"
-	}
+		fontSize: "20px",
+		alignItems: "center",
+	},
 });
 
 const EMPTY_ENTRY = (): IEntry => ({
@@ -91,7 +98,7 @@ function App() {
 	const styles = useStyles();
 	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
 
-	const columnHeaders = ["trashIcon", "Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
+	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
 
 	const newEntry = (): void => setEntries((prev) => [...prev, EMPTY_ENTRY()]);
 
@@ -115,18 +122,18 @@ function App() {
 			</div>
 			<div className={styles.contentContainer}>
 				<div className={styles.columnHeaderContainer}>
-					{columnHeaders.map((header) =>
-						header === "trashIcon" ? (
-							<DeleteFilled />
-						) : (
-							<Text size={300} weight="bold" className={styles.columnHeader}>
-								{header}
-							</Text>
-						)
-					)}
+					<div className={styles.iconColumn} />
+					{columnHeaders.map((header) => (
+						<Text size={300} weight="bold" className={styles.columnHeader}>
+							{header}
+						</Text>
+					))}
 				</div>
 				{entries.map((entry) => (
 					<div key={entry.id} className={styles.columnHeaderContainer}>
+						<Button appearance="subtle" className={styles.iconColumn}>
+							<DeleteFilled className={styles.smallIcon} onClick={() => removeEntry(entry.id)} />
+						</Button>
 						<Input
 							value={entry.date.toDateString()}
 							onChange={(e) => updateEntry(entry.id, "date", new Date(e.target.value))}
@@ -154,6 +161,7 @@ function App() {
 						/>
 					</div>
 				))}
+				<Button onClick={() => calculateHandicap(entries)}>{calculateHandicap(entries)}</Button>
 			</div>
 		</div>
 	);

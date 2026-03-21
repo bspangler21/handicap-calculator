@@ -15,5 +15,6 @@ export function calculateHandicap(scores: IEntry[]) {
 	);
 
 	const handicap = differentials.reduce((sum, d) => sum + d, 0) / differentials.length;
+	console.log("scores", scores, Math.round(handicap * 10) / 10);
 	return Math.round(handicap * 10) / 10; // Round to 1 decimal place
 }
