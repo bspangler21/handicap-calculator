@@ -1,5 +1,6 @@
 import "./App.css";
 import { makeStyles, tokens, Text, Input, Button } from "@fluentui/react-components";
+import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
 import React from "react";
@@ -17,8 +18,9 @@ const useStyles = makeStyles({
 	contentContainer: {
 		display: "flex",
 		flexDirection: "column",
-		width: "100%",
-		height: "100%",
+		// width: "100%",
+		// height: "100%",
+		flexGrow: 1,
 		boxSizing: "border-box",
 		padding: "20px",
 	},
@@ -78,6 +80,11 @@ const useStyles = makeStyles({
 		fontSize: "20px",
 		alignItems: "center",
 	},
+	buttonContainer: {
+		display: "flex",
+		alignItems: "center",
+		flexDirection: "column",
+	}
 });
 
 const EMPTY_ENTRY = (): IEntry => ({
@@ -97,8 +104,19 @@ const testData: IEntry[] = mockScores;
 function App() {
 	const styles = useStyles();
 	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
+	const [handicapVisible, setHandicapVisible] = React.useState(false);
+	console.log("entries", entries);
 
 	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
+
+	const parseDateFromString = React.useCallback((dateString: string): Date => {
+		const [month, day, year] = dateString.trim().split("/").map(Number);
+		const newDateParts = [month, day, year].map(part => isNaN(part) ? 1 : part); // Default to 1 if parsing fails
+		console.log("parsed date", month, day, year);
+		console.log("date", newDateParts);
+		console.log("newValue", new Date(year, month - 1, day));
+		return new Date(year, month - 1, day);
+	}, []);
 
 	const newEntry = (): void => setEntries((prev) => [...prev, EMPTY_ENTRY()]);
 
@@ -108,7 +126,10 @@ function App() {
 		);
 	};
 
-	const removeEntry = (id: string) => setEntries(prev => prev.filter(e => e.id !== id));
+	const removeEntry = (id: string) => {
+		setEntries(prev => prev.filter(e => e.id !== id));
+		setHandicapVisible(false);
+	};
 
 	return (
 		<div className={styles.pageContainer}>
@@ -134,10 +155,17 @@ function App() {
 						<Button appearance="subtle" className={styles.iconColumn}>
 							<DeleteFilled className={styles.smallIcon} onClick={() => removeEntry(entry.id)} />
 						</Button>
-						<Input
-							value={entry.date.toDateString()}
-							onChange={(e) => updateEntry(entry.id, "date", new Date(e.target.value))}
+						<DatePicker
 							className={styles.columnHeader}
+							value={entry.date}
+							onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
+							showGoToToday={true}
+							allowTextInput={true}
+							highlightCurrentMonth={false}
+							highlightSelectedMonth={true}
+							formatDate={(date) => (date ? date.toLocaleDateString() : "")}
+							initialPickerDate={entry.date ?? new Date()}
+							parseDateFromString={parseDateFromString}
 						/>
 						<Input
 							value={entry.courseName}
@@ -161,7 +189,24 @@ function App() {
 						/>
 					</div>
 				))}
-				<Button onClick={() => calculateHandicap(entries)}>{calculateHandicap(entries)}</Button>
+				<div className={styles.buttonContainer}>
+					<Button
+						disabled={entries.filter((entry) => entry.score > 0 && entry.courseRating > 0 && entry.slopeRating > 0).length < 3}
+						onClick={() => {
+							calculateHandicap(entries);
+							setHandicapVisible(true);
+						}}
+					>
+						Calculate Handicap
+					</Button>
+				</div>
+				<div>
+					{handicapVisible && (
+						<Text size={500} weight="semibold">
+							Your Handicap: {calculateHandicap(entries)}
+						</Text>
+					)}
+				</div>
 			</div>
 		</div>
 	);
