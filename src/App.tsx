@@ -191,6 +191,7 @@ function App() {
 				))}
 				<div className={styles.buttonContainer}>
 					<Button
+					appearance="primary"
 						disabled={entries.filter((entry) => entry.score > 0 && entry.courseRating > 0 && entry.slopeRating > 0).length < 3}
 						onClick={() => {
 							calculateHandicap(entries);
