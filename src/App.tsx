@@ -173,26 +173,34 @@ function App() {
 							className={styles.columnHeader}
 						/>
 						<Input
+							type="number"
+							step="0.1"
 							value={entry.courseRating.toString()}
-							onChange={(e) => updateEntry(entry.id, "courseRating", Number(e.target.value))}
+							onChange={(e) => updateEntry(entry.id, "courseRating", parseFloat(e.target.value))}
 							className={styles.columnHeader}
 						/>
 						<Input
+							type="number"
 							value={entry.slopeRating.toString()}
-							onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
+							onChange={(e) => updateEntry(entry.id, "slopeRating", parseFloat(e.target.value))}
 							className={styles.columnHeader}
 						/>
 						<Input
+							type="number"
 							value={entry.score.toString()}
-							onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
+							onChange={(e) => updateEntry(entry.id, "score", parseFloat(e.target.value))}
 							className={styles.columnHeader}
 						/>
 					</div>
 				))}
 				<div className={styles.buttonContainer}>
 					<Button
-					appearance="primary"
-						disabled={entries.filter((entry) => entry.score > 0 && entry.courseRating > 0 && entry.slopeRating > 0).length < 3}
+						appearance="primary"
+						disabled={
+							entries.filter(
+								(entry) => entry.score > 0 && entry.courseRating > 0 && entry.slopeRating > 0
+							).length < 3
+						}
 						onClick={() => {
 							calculateHandicap(entries);
 							setHandicapVisible(true);
