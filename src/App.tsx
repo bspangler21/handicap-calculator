@@ -4,7 +4,6 @@ import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
 import React from "react";
-import { mockScores } from "./mockData/mockScores";
 import { calculateHandicap } from "./lib/util";
 
 const useStyles = makeStyles({
@@ -18,8 +17,6 @@ const useStyles = makeStyles({
 	contentContainer: {
 		display: "flex",
 		flexDirection: "column",
-		// width: "100%",
-		// height: "100%",
 		flexGrow: 1,
 		boxSizing: "border-box",
 		padding: "20px",
@@ -40,7 +37,7 @@ const useStyles = makeStyles({
 	headerText: {
 		fontSize: "600",
 		color: "#FFFFFF",
-		weight: "semibold",
+		fontWeight: "semibold",
 	},
 	footer: {
 		display: "flex",
@@ -84,7 +81,7 @@ const useStyles = makeStyles({
 		display: "flex",
 		alignItems: "center",
 		flexDirection: "column",
-	}
+	},
 });
 
 const EMPTY_ENTRY = (): IEntry => ({
@@ -94,31 +91,25 @@ const EMPTY_ENTRY = (): IEntry => ({
 	courseRating: 0,
 	slopeRating: 0,
 	score: 0,
-	button: {
-		backgroundColor: tokens.colorBrandForeground,
-	},
 });
-
-const testData: IEntry[] = mockScores;
 
 function App() {
 	const styles = useStyles();
 	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
-	console.log("entries", entries);
+	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
 
 	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
 
 	const parseDateFromString = React.useCallback((dateString: string): Date => {
 		const [month, day, year] = dateString.trim().split("/").map(Number);
-		const newDateParts = [month, day, year].map(part => isNaN(part) ? 1 : part); // Default to 1 if parsing fails
-		console.log("parsed date", month, day, year);
-		console.log("date", newDateParts);
-		console.log("newValue", new Date(year, month - 1, day));
 		return new Date(year, month - 1, day);
 	}, []);
 
-	const newEntry = (): void => setEntries((prev) => [...prev, EMPTY_ENTRY()]);
+	const newEntry = (): void => {
+		const entry = EMPTY_ENTRY();
+		setEntries((prev) => [...prev, entry]);
+	};
 
 	const updateEntry = (id: string, field: keyof IEntry, value: string | number | Date): void => {
 		setEntries((prev) =>
@@ -126,8 +117,13 @@ function App() {
 		);
 	};
 
-	const removeEntry = (id: string) => {
-		setEntries(prev => prev.filter(e => e.id !== id));
+	const removeEntry = (id: string): void => {
+		setEntries((prev) => prev.filter((e) => e.id !== id));
+		setCourseRatingInput((prev) => {
+			const next = { ...prev };
+			delete next[id];
+			return next;
+		});
 		setHandicapVisible(false);
 	};
 
@@ -145,15 +141,19 @@ function App() {
 				<div className={styles.columnHeaderContainer}>
 					<div className={styles.iconColumn} />
 					{columnHeaders.map((header) => (
-						<Text size={300} weight="bold" className={styles.columnHeader}>
+						<Text key={header} size={300} weight="bold" className={styles.columnHeader}>
 							{header}
 						</Text>
 					))}
 				</div>
 				{entries.map((entry) => (
 					<div key={entry.id} className={styles.columnHeaderContainer}>
-						<Button appearance="subtle" className={styles.iconColumn}>
-							<DeleteFilled className={styles.smallIcon} onClick={() => removeEntry(entry.id)} />
+						<Button
+							appearance="subtle"
+							className={styles.iconColumn}
+							onClick={() => removeEntry(entry.id)}
+						>
+							<DeleteFilled className={styles.smallIcon} />
 						</Button>
 						<DatePicker
 							className={styles.columnHeader}
@@ -163,7 +163,7 @@ function App() {
 							allowTextInput={true}
 							highlightCurrentMonth={false}
 							highlightSelectedMonth={true}
-							formatDate={(date) => (date ? date.toLocaleDateString() : "")}
+							formatDate={(date?: Date) => (date ? date.toLocaleDateString() : "")}
 							initialPickerDate={entry.date ?? new Date()}
 							parseDateFromString={parseDateFromString}
 						/>
@@ -175,20 +175,44 @@ function App() {
 						<Input
 							type="number"
 							step="0.1"
-							value={entry.courseRating.toString()}
-							onChange={(e) => updateEntry(entry.id, "courseRating", parseFloat(e.target.value))}
+							inputMode="decimal"
+							value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
+							onChange={(e) => {
+								setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
+							}}
+							onBlur={() => {
+								const raw = courseRatingInput[entry.id];
+								if (raw === undefined || raw.trim() === "") {
+									setCourseRatingInput((prev) => {
+										const next = { ...prev };
+										delete next[entry.id];
+										return next;
+									});
+									return;
+								}
+
+								const parsed = Number(raw);
+								if (!Number.isNaN(parsed)) {
+									updateEntry(entry.id, "courseRating", parsed);
+								}
+								setCourseRatingInput((prev) => {
+									const next = { ...prev };
+									delete next[entry.id];
+									return next;
+								});
+							}}
 							className={styles.columnHeader}
 						/>
 						<Input
 							type="number"
 							value={entry.slopeRating.toString()}
-							onChange={(e) => updateEntry(entry.id, "slopeRating", parseFloat(e.target.value))}
+							onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
 							className={styles.columnHeader}
 						/>
 						<Input
 							type="number"
 							value={entry.score.toString()}
-							onChange={(e) => updateEntry(entry.id, "score", parseFloat(e.target.value))}
+							onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
 							className={styles.columnHeader}
 						/>
 					</div>
@@ -202,7 +226,6 @@ function App() {
 							).length < 3
 						}
 						onClick={() => {
-							calculateHandicap(entries);
 							setHandicapVisible(true);
 						}}
 					>
