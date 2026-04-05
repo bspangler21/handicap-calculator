@@ -1,54 +1,9 @@
-import { makeStyles, tokens, Text, Input, Button, Label } from "@fluentui/react-components";
+import { Text, Input, Button, Label } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
 import React from "react";
 import { calculateHandicap } from "./lib/util";
-
-const useStyles = makeStyles({
-	contentContainer: {
-		display: "flex",
-		flexDirection: "column",
-		flexGrow: 1,
-		boxSizing: "border-box",
-		padding: "20px",
-	},
-	footer: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "space-between",
-		alignItems: "center",
-		backgroundColor: tokens.colorBrandBackground,
-		color: "#FFFFFF",
-		minHeight: "50px",
-		width: "100%",
-		boxSizing: "border-box",
-	},
-	iconColumn: {
-		width: "40px",
-		minWidth: "40px",
-		flexShrink: 0,
-	},
-	columnHeader: {
-		flex: 1,
-		textAlign: "center",
-		padding: "5px",
-	},
-	button: {
-		width: "150px",
-		height: "30px",
-	},
-	smallIcon: {
-		fontSize: "20px",
-		alignItems: "center",
-	},
-	buttonContainer: {
-		display: "flex",
-		alignItems: "center",
-		flexDirection: "column",
-	},
-});
 
 const EMPTY_ENTRY = (): IEntry => ({
 	id: crypto.randomUUID(),
@@ -60,7 +15,6 @@ const EMPTY_ENTRY = (): IEntry => ({
 });
 
 function App() {
-	const styles = useStyles();
 	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
@@ -197,7 +151,7 @@ function App() {
 						/>
 					</div>
 				))}
-				<div className={styles.buttonContainer}>
+				<div className="flex flex-col items-center">
 					<Button
 						appearance="primary"
 						disabled={
