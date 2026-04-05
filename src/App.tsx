@@ -13,8 +13,54 @@ const EMPTY_ENTRY = (): IEntry => ({
 	slopeRating: 0,
 	score: 0,
 });
+import { Text, Input, Button, Label } from "@fluentui/react-components";
+import { DatePicker } from "@fluentui/react-datepicker-compat";
+import { DeleteFilled } from "@fluentui/react-icons";
+import type { IEntry } from "./types/IEntry";
+import React from "react";
+import { calculateHandicap } from "./lib/util";
+
+const EMPTY_ENTRY = (): IEntry => ({
+	id: crypto.randomUUID(),
+	date: new Date(),
+	courseName: "",
+	courseRating: 0,
+	slopeRating: 0,
+	score: 0,
+});
 
 function App() {
+	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
+	const [handicapVisible, setHandicapVisible] = React.useState(false);
+	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
+
+	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
+
+	const parseDateFromString = React.useCallback((dateString: string): Date => {
+		const [month, day, year] = dateString.trim().split("/").map(Number);
+		return new Date(year, month - 1, day);
+	}, []);
+
+	const newEntry = (): void => {
+		const entry = EMPTY_ENTRY();
+		setEntries((prev) => [...prev, entry]);
+	};
+
+	const updateEntry = (id: string, field: keyof IEntry, value: string | number | Date): void => {
+		setEntries((prev) =>
+			prev.map((entry) => (entry.id === id ? { ...entry, [field]: value } : entry))
+		);
+	};
+
+	const removeEntry = (id: string): void => {
+		setEntries((prev) => prev.filter((e) => e.id !== id));
+		setCourseRatingInput((prev) => {
+			const next = { ...prev };
+			delete next[id];
+			return next;
+		});
+		setHandicapVisible(false);
+	};
 	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
