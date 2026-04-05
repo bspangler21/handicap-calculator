@@ -33,7 +33,7 @@ const lightTheme: Theme = {
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<FluentProvider theme={lightTheme} style={{ height: "100%", display: "flex", width: "100%" }}>
+		<FluentProvider theme={lightTheme} className="flex h-full w-full">
 			<App />
 		</FluentProvider>
 	</StrictMode>

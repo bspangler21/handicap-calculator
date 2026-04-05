@@ -1,5 +1,4 @@
-import "./App.css";
-import { makeStyles, tokens, Text, Input, Button } from "@fluentui/react-components";
+import { makeStyles, tokens, Text, Input, Button, Label } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
@@ -7,37 +6,12 @@ import React from "react";
 import { calculateHandicap } from "./lib/util";
 
 const useStyles = makeStyles({
-	pageContainer: {
-		display: "flex",
-		flexDirection: "column",
-		width: "100%",
-		height: "100%",
-		margin: "0",
-	},
 	contentContainer: {
 		display: "flex",
 		flexDirection: "column",
 		flexGrow: 1,
 		boxSizing: "border-box",
 		padding: "20px",
-	},
-	header: {
-		display: "flex",
-		flexDirection: "row",
-		flexWrap: "wrap",
-		justifyContent: "space-between",
-		alignItems: "center",
-		backgroundColor: tokens.colorBrandBackground,
-		color: "#FFFFFF",
-		minHeight: "50px",
-		width: "100%",
-		boxSizing: "border-box",
-		padding: "10px",
-	},
-	headerText: {
-		fontSize: "600",
-		color: "#FFFFFF",
-		fontWeight: "semibold",
 	},
 	footer: {
 		display: "flex",
@@ -50,14 +24,6 @@ const useStyles = makeStyles({
 		minHeight: "50px",
 		width: "100%",
 		boxSizing: "border-box",
-	},
-	columnHeaderContainer: {
-		display: "flex",
-		flexDirection: "row",
-		width: "100%",
-		boxSizing: "border-box",
-		padding: "5px",
-		gap: "20px",
 	},
 	iconColumn: {
 		width: "40px",
@@ -128,35 +94,49 @@ function App() {
 	};
 
 	return (
-		<div className={styles.pageContainer}>
-			<div className={styles.header}>
-				<Text weight="semibold" size={600} style={{ flexShrink: 0 }}>
+		<div className="flex flex-col h-full w-full m-0">
+			{/* Header */}
+			<div className="flex flex-row flex-wrap justify-between items-center bg-(--background) text-white min-h-[50px] w-full box-border p-3">
+				<Text size={600} weight={"semibold"}>
 					Golf Handicap Calculator
 				</Text>
-				<Button onClick={newEntry} appearance="secondary" className={styles.button}>
+				<Button
+					onClick={newEntry}
+					appearance="secondary"
+					className="items-center text-xl min-w-[150px]!"
+				>
 					Add Entry
 				</Button>
 			</div>
-			<div className={styles.contentContainer}>
-				<div className={styles.columnHeaderContainer}>
-					<div className={styles.iconColumn} />
+			<div>
+				<p className="text-lg font-semibold p-2">
+					To get started, add at least three entries, then click "Calculate Handicap".
+				</p>
+				<p className="p-2 mb-5">
+					The calculator removes your highest and lowest scores, then averages the handicap
+					differential of the remaining scores to determine your handicap index. The formula for
+					handicap differential is <strong>(Score - Course Rating) * 113 / Slope Rating</strong>.
+					Your handicap index is rounded to one decimal place.
+				</p>
+			</div>
+			<div className="flex flex-col flex-1 box-border p-2 mx-2 overflow-y-auto">
+				<div className="flex flex-row w-full box-border p-1 gap-10">
+					<div className="w-10 min-w-10 shrink-0" />
 					{columnHeaders.map((header) => (
-						<Text key={header} size={300} weight="bold" className={styles.columnHeader}>
+						<Label key={header} size="large" weight="semibold" className="flex-1 text-center! p-1">
 							{header}
-						</Text>
+						</Label>
 					))}
 				</div>
 				{entries.map((entry) => (
-					<div key={entry.id} className={styles.columnHeaderContainer}>
-						<Button
-							appearance="subtle"
-							className={styles.iconColumn}
-							onClick={() => removeEntry(entry.id)}
-						>
-							<DeleteFilled className={styles.smallIcon} />
-						</Button>
+					<div key={entry.id} className="flex flex-row w-full box-border p-1 gap-10 mb-2">
+						<div className="w-10! min-w-10! shrink-0!">
+							<Button appearance="subtle" onClick={() => removeEntry(entry.id)}>
+								<DeleteFilled className="text-xl items-center" />
+							</Button>
+						</div>
 						<DatePicker
-							className={styles.columnHeader}
+							className="flex flex-1 text-center p-1"
 							value={entry.date}
 							onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
 							showGoToToday={true}
@@ -170,7 +150,7 @@ function App() {
 						<Input
 							value={entry.courseName}
 							onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-							className={styles.columnHeader}
+							className="flex flex-1 text-center p-1"
 						/>
 						<Input
 							type="number"
@@ -201,19 +181,19 @@ function App() {
 									return next;
 								});
 							}}
-							className={styles.columnHeader}
+							className="flex flex-1 text-center p-1"
 						/>
 						<Input
 							type="number"
 							value={entry.slopeRating.toString()}
 							onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
-							className={styles.columnHeader}
+							className="flex flex-1 text-center p-1"
 						/>
 						<Input
 							type="number"
 							value={entry.score.toString()}
 							onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
-							className={styles.columnHeader}
+							className="flex flex-1 text-center p-1"
 						/>
 					</div>
 				))}
@@ -240,6 +220,7 @@ function App() {
 					)}
 				</div>
 			</div>
+			<div className="flex bg-(--background) w-full min-h-[50px]"></div>
 		</div>
 	);
 }
