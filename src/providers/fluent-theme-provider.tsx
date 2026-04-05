@@ -1,4 +1,4 @@
-import { FluentProvider, webLightTheme, webDarkTheme, createDarkTheme, createLightTheme } from "@fluentui/react-components";
+import { FluentProvider, createDarkTheme, createLightTheme } from "@fluentui/react-components";
 import { useTheme } from "../hooks/use-theme";
 
 import type { BrandVariants, Theme } from "@fluentui/react-components";
@@ -43,6 +43,7 @@ export function FluentThemeProvider({ children }: Props) {
 	return (
 		<FluentProvider
 			theme={isDark ? darkTheme : lightTheme}
+			className="flex h-full w-full"
 			style={{ background: "transparent" }}
 		>
 			{children}

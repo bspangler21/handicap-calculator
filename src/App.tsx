@@ -1,4 +1,4 @@
-import { Text, Input, Button, Label, FluentProvider, webLightTheme, webDarkTheme } from "@fluentui/react-components";
+import { Text, Input, Button, Label } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
@@ -53,7 +53,7 @@ function App() {
 	return (
 		<ThemeProvider>
 			<FluentThemeProvider>
-				<div className="flex flex-col h-full w-full m-0 bg-white dark:bg-black">
+				<div className="flex flex-col h-full w-full m-0 bg-app-background">
 					{/* Header */}
 					<div className="flex flex-row flex-wrap justify-between items-center bg-primary text-primary-foreground min-h-[50px] w-full box-border p-3">
 						<Text size={600} weight={"semibold"}>
@@ -71,10 +71,10 @@ function App() {
 						</div>
 					</div>
 					<div>
-						<p className="text-lg text-dark-foreground font-semibold p-2">
+						<p className="text-lg text-app-foreground font-semibold p-2">
 							To get started, add at least three entries, then click "Calculate Handicap".
 						</p>
-						<p className="text-dark-foreground p-2 mb-5">
+						<p className="text-app-foreground p-2 mb-5">
 							The calculator removes your highest and lowest scores, then averages the handicap
 							differential of the remaining scores to determine your handicap index. The formula for
 							handicap differential is <strong>(Score - Course Rating) * 113 / Slope Rating</strong>
@@ -90,7 +90,7 @@ function App() {
 									key={header}
 									size="large"
 									weight="semibold"
-									className="flex-1 text-center! p-1 text-dark-foreground"
+									className="flex-1 text-center! p-1 text-app-foreground"
 								>
 									{header}
 								</Label>
@@ -103,11 +103,11 @@ function App() {
 							>
 								<div className="w-10! min-w-10! flex items-center">
 									<Button appearance="transparent" onClick={() => removeEntry(entry.id)}>
-										<DeleteFilled className="text-lg items-center text-dark-foreground"/>
+										<DeleteFilled className="text-lg items-center text-app-foreground"/>
 									</Button>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-dark-foreground">
+									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-app-foreground">
 										Date
 									</Label>
 									<DatePicker
@@ -127,21 +127,21 @@ function App() {
 									<Label
 										size="small"
 										weight="semibold"
-										className="sm:hidden mb-1 text-dark-foreground"
+										className="sm:hidden mb-1 text-app-foreground"
 									>
 										Course Name
 									</Label>
 									<Input
 										value={entry.courseName}
 										onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-										className="w-full text-dark-foreground"
+										className="w-full text-app-foreground"
 									/>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
 									<Label
 										size="small"
 										weight="semibold"
-										className="sm:hidden mb-1 text-dark-foreground"
+										className="sm:hidden mb-1 text-app-foreground"
 									>
 										Course Rating
 									</Label>
@@ -174,29 +174,29 @@ function App() {
 												return next;
 											});
 										}}
-										className="w-full text-dark-foreground"
+										className="w-full text-app-foreground"
 									/>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-dark-foreground">
+									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-app-foreground">
 										Slope Rating
 									</Label>
 									<Input
 										type="number"
 										value={entry.slopeRating.toString()}
 										onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
-										className="w-full text-dark-foreground"
+										className="w-full text-app-foreground"
 									/>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-dark-foreground">
+									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-app-foreground">
 										Score
 									</Label>
 									<Input
 										type="number"
 										value={entry.score.toString()}
 										onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
-										className="w-full text-dark-foreground"
+										className="w-full text-app-foreground"
 									/>
 								</div>
 							</div>
@@ -212,14 +212,14 @@ function App() {
 								onClick={() => {
 									setHandicapVisible(true);
 								}}
-								className="bg-primary! text-primary-foreground! min-w-[200px]!"
+								className="min-w-[200px]!"
 							>
 								Calculate Handicap
 							</Button>
 						</div>
 						<div>
 							{handicapVisible && (
-								<Text size={500} weight="semibold" className="text-dark-foreground">
+								<Text size={500} weight="semibold" className="text-app-foreground">
 									Your Handicap: {calculateHandicap(entries)}
 								</Text>
 							)}
