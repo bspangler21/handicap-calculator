@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import {
 	FluentProvider,
+  createDarkTheme,
   createLightTheme,
 } from "@fluentui/react-components";
 import type { BrandVariants, Theme } from "@fluentui/react-components";
@@ -30,6 +31,13 @@ const theMasters: BrandVariants = {
 const lightTheme: Theme = {
 	...createLightTheme(theMasters),
 };
+
+const darkTheme: Theme = {
+	...createDarkTheme(theMasters),
+};
+
+darkTheme.colorBrandForeground1 = theMasters[110];
+darkTheme.colorBrandForeground2 = theMasters[120];
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
