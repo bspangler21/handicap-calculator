@@ -74,7 +74,8 @@ function App() {
 				</p>
 			</div>
 			<div className="flex flex-col flex-1 box-border p-2 mx-2 overflow-y-auto">
-				<div className="flex flex-row w-full box-border p-1 gap-10">
+				{/* Column headers — hidden on mobile, visible on sm+ */}
+				<div className="hidden sm:flex flex-row w-full box-border p-1 gap-10">
 					<div className="w-10 min-w-10 shrink-0" />
 					{columnHeaders.map((header) => (
 						<Label key={header} size="large" weight="semibold" className="flex-1 text-center! p-1">
@@ -83,72 +84,97 @@ function App() {
 					))}
 				</div>
 				{entries.map((entry) => (
-					<div key={entry.id} className="flex flex-row w-full box-border p-1 gap-10 mb-2">
+					<div key={entry.id} className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 mb-2">
 						<div className="w-10! min-w-10! shrink-0!">
 							<Button appearance="subtle" onClick={() => removeEntry(entry.id)}>
 								<DeleteFilled className="text-xl items-center" />
 							</Button>
 						</div>
-						<DatePicker
-							className="flex flex-1 text-center p-1"
-							value={entry.date}
-							onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
-							showGoToToday={true}
-							allowTextInput={true}
-							highlightCurrentMonth={false}
-							highlightSelectedMonth={true}
-							formatDate={(date?: Date) => (date ? date.toLocaleDateString() : "")}
-							initialPickerDate={entry.date ?? new Date()}
-							parseDateFromString={parseDateFromString}
-						/>
-						<Input
-							value={entry.courseName}
-							onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-							className="flex flex-1 text-center p-1"
-						/>
-						<Input
-							type="number"
-							step="0.1"
-							inputMode="decimal"
-							value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
-							onChange={(e) => {
-								setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
-							}}
-							onBlur={() => {
-								const raw = courseRatingInput[entry.id];
-								if (raw === undefined || raw.trim() === "") {
+						<div className="flex flex-col flex-1 min-w-0 p-1">
+							<Label size="small" weight="semibold" className="sm:hidden mb-1">
+								Date
+							</Label>
+							<DatePicker
+								className="w-full"
+								value={entry.date}
+								onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
+								showGoToToday={true}
+								allowTextInput={true}
+								highlightCurrentMonth={false}
+								highlightSelectedMonth={true}
+								formatDate={(date?: Date) => (date ? date.toLocaleDateString() : "")}
+								initialPickerDate={entry.date ?? new Date()}
+								parseDateFromString={parseDateFromString}
+							/>
+						</div>
+						<div className="flex flex-col flex-1 min-w-0 p-1">
+							<Label size="small" weight="semibold" className="sm:hidden mb-1">
+								Course Name
+							</Label>
+							<Input
+								value={entry.courseName}
+								onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
+								className="w-full"
+							/>
+						</div>
+						<div className="flex flex-col flex-1 min-w-0 p-1">
+							<Label size="small" weight="semibold" className="sm:hidden mb-1">
+								Course Rating
+							</Label>
+							<Input
+								type="number"
+								step="0.1"
+								inputMode="decimal"
+								value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
+								onChange={(e) => {
+									setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
+								}}
+								onBlur={() => {
+									const raw = courseRatingInput[entry.id];
+									if (raw === undefined || raw.trim() === "") {
+										setCourseRatingInput((prev) => {
+											const next = { ...prev };
+											delete next[entry.id];
+											return next;
+										});
+										return;
+									}
+
+									const parsed = Number(raw);
+									if (!Number.isNaN(parsed)) {
+										updateEntry(entry.id, "courseRating", parsed);
+									}
 									setCourseRatingInput((prev) => {
 										const next = { ...prev };
 										delete next[entry.id];
 										return next;
 									});
-									return;
-								}
-
-								const parsed = Number(raw);
-								if (!Number.isNaN(parsed)) {
-									updateEntry(entry.id, "courseRating", parsed);
-								}
-								setCourseRatingInput((prev) => {
-									const next = { ...prev };
-									delete next[entry.id];
-									return next;
-								});
-							}}
-							className="flex flex-1 text-center p-1"
-						/>
-						<Input
-							type="number"
-							value={entry.slopeRating.toString()}
-							onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
-							className="flex flex-1 text-center p-1"
-						/>
-						<Input
-							type="number"
-							value={entry.score.toString()}
-							onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
-							className="flex flex-1 text-center p-1"
-						/>
+								}}
+								className="w-full"
+							/>
+						</div>
+						<div className="flex flex-col flex-1 min-w-0 p-1">
+							<Label size="small" weight="semibold" className="sm:hidden mb-1">
+								Slope Rating
+							</Label>
+							<Input
+								type="number"
+								value={entry.slopeRating.toString()}
+								onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
+								className="w-full"
+							/>
+						</div>
+						<div className="flex flex-col flex-1 min-w-0 p-1">
+							<Label size="small" weight="semibold" className="sm:hidden mb-1">
+								Score
+							</Label>
+							<Input
+								type="number"
+								value={entry.score.toString()}
+								onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
+								className="w-full"
+							/>
+						</div>
 					</div>
 				))}
 				<div className="flex flex-col items-center">
