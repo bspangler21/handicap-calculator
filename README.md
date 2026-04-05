@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# Golf Handicap Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser-based tool for calculating a golf handicap index from manually entered round scores. Users enter one or more rounds with course details, and the app computes a handicap differential for each round, then derives the overall handicap index.
 
-Currently, two official plugins are available:
+## How the calculation works
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The app requires **at least three rounds** with valid scores before it will calculate. Given the entered rounds, it:
 
-## React Compiler
+1. Sorts all rounds by date and takes the most recent six.
+2. Removes the single lowest and single highest score from that set.
+3. Calculates the **handicap differential** for each remaining round using the USGA formula:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+$$\text{Differential} = \frac{(\text{Score} - \text{Course Rating}) \times 113}{\text{Slope Rating}}$$
 
-## Expanding the ESLint configuration
+1. Averages the differentials and rounds the result to one decimal place — that is the reported **handicap index**.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+| Layer | Technology |
+|---|---|
+| Framework | React 19 |
+| Language | TypeScript 5.9 |
+| Build tool | Vite 7 |
+| UI components | Fluent UI v9 (`@fluentui/react-components`, `@fluentui/react-datepicker-compat`, `@fluentui/react-icons`) |
+| Styling | Tailwind CSS v4 |
+| Linting | ESLint 9 with `typescript-eslint` |
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Project structure
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  App.tsx              # Root component — all UI and state live here
+  main.tsx             # React entry point
+  index.css            # Global styles
+  types/
+    IEntry.ts          # IEntry interface (id, date, courseName, courseRating, slopeRating, score)
+  lib/
+    util.ts            # calculateHandicap() — pure calculation logic
+  mockData/
+    mockScores.ts      # Sample IEntry data for local development/testing
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+The app runs at `http://localhost:5173` by default.
+
+## Available scripts
+
+| Command | Purpose |
+|---|---|
+| `npm run dev` | Start the Vite dev server with hot module replacement |
+| `npm run build` | Type-check with `tsc` and produce a production build in `dist/` |
+| `npm run preview` | Serve the production build locally for verification |
+| `npm run lint` | Run ESLint across the entire project |
+
+## Key implementation notes
+
+- **All state is client-side.** There is no backend or persistence layer. Data is lost on page refresh.
+- **`IEntry` is the central data type.** Every round is represented as an `IEntry` object. The `id` field is a `crypto.randomUUID()` value used as the React list key and for targeted state updates.
+- **`calculateHandicap` is a pure function** in `src/lib/util.ts`. It receives the full `IEntry[]` array and returns the computed handicap index as a `number`. Logic changes to the formula belong there.
+- **Course rating input uses a local string buffer** (`courseRatingInput` state) to support decimal typing without React interfering mid-keystroke. The parsed `number` is committed to the entry on `onBlur`.
+- **The "Calculate Handicap" button is disabled** until at least three entries have a non-zero `score`, `courseRating`, and `slopeRating`.
