@@ -51,7 +51,7 @@ function App() {
 	};
 
 	return (
-		<ThemeProvider>
+		<ThemeProvider defaultTheme="light" storageKey="theme">
 			<FluentThemeProvider>
 				<div className="flex flex-col h-full w-full m-0 bg-app-background">
 					{/* Header */}
@@ -103,11 +103,15 @@ function App() {
 							>
 								<div className="w-10! min-w-10! flex items-center">
 									<Button appearance="transparent" onClick={() => removeEntry(entry.id)}>
-										<DeleteFilled className="text-lg items-center text-app-foreground"/>
+										<DeleteFilled className="text-lg items-center text-app-foreground" />
 									</Button>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-app-foreground">
+									<Label
+										size="small"
+										weight="semibold"
+										className="sm:hidden mb-1 text-app-foreground"
+									>
 										Date
 									</Label>
 									<DatePicker
@@ -178,7 +182,11 @@ function App() {
 									/>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-app-foreground">
+									<Label
+										size="small"
+										weight="semibold"
+										className="sm:hidden mb-1 text-app-foreground"
+									>
 										Slope Rating
 									</Label>
 									<Input
@@ -189,7 +197,11 @@ function App() {
 									/>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label size="small" weight="semibold" className="sm:hidden mb-1 text-app-foreground">
+									<Label
+										size="small"
+										weight="semibold"
+										className="sm:hidden mb-1 text-app-foreground"
+									>
 										Score
 									</Label>
 									<Input
