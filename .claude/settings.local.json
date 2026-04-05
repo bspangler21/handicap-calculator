@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/BrettSpangler/.claude/skills/**)",
+      "Read(//c/Users/BrettSpangler/.claude/**)",
+      "Bash(cp -r C:/Users/BrettSpangler/.claude/agents C:/Users/BrettSpangler/source/repos/Notes/AI/config/claude/)",
+      "Bash(cp -r C:/Users/BrettSpangler/.claude/commands C:/Users/BrettSpangler/source/repos/Notes/AI/config/claude/)",
+      "Bash(cp -r C:/Users/BrettSpangler/.claude/memory C:/Users/BrettSpangler/source/repos/Notes/AI/config/claude/)",
+      "Bash(cp -r C:/Users/BrettSpangler/.claude/skills C:/Users/BrettSpangler/source/repos/Notes/AI/config/claude/)",
+      "Bash(mkdir -p C:/Users/BrettSpangler/source/repos/Notes/AI/config/claude/plugins)"
+    ]
+  }
+}
