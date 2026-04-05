@@ -21,8 +21,8 @@
 }
 
 @theme inline {
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
+  /* --color-primary: var(--primary); */
+  /* --color-primary-foreground: var(--primary-foreground); */
   --color-dark-foreground: var(--dark-foreground);
 }
 
@@ -39,7 +39,7 @@ body {
 }
 
 .dark {
-  --primary-foreground: #ffffff;
+  /* --primary-foreground: #ffffff; */
   --dark-foreground: #ffffff;
 }
 
