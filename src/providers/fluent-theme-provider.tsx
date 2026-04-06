@@ -43,6 +43,7 @@ export function FluentThemeProvider({ children }: Props) {
 	return (
 		<FluentProvider
 			theme={isDark ? darkTheme : lightTheme}
+			applyStylesToPortals={false}
 			className="flex h-full w-full"
 			style={{ background: "transparent" }}
 		>
