@@ -99,29 +99,21 @@ function App() {
 								key={entry.id}
 								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 mb-2"
 							>
-								<Card>
+								<Card className="flex-1">
 									<CardHeader
+										className="sm:hidden! w-full "
 										action={
 											<Button
 												appearance="transparent"
 												onClick={() => removeEntry(entry.id)}
-												className="w-full!"
-												icon={<DeleteFilled />}
-											/>
+												className="ml-auto bg-red-400! text-app-background!"
+												icon={<DeleteFilled />}>Delete</Button>
 										}
 									/>
 									<div className="hidden sm:flex w-10! min-w-10! items-center">
 										<Button appearance="transparent" onClick={() => removeEntry(entry.id)}>
 											<DeleteFilled className="text-lg items-center text-app-foreground" />
 										</Button>
-									</div>
-									<div className="flex sm:hidden w-full bg-red-400 rounded">
-										<Button
-											appearance="transparent"
-											onClick={() => removeEntry(entry.id)}
-											className="w-full!"
-											icon={<DeleteFilled />}
-										></Button>
 									</div>
 									<div className="flex flex-col flex-1 min-w-0 p-1">
 										<Label
