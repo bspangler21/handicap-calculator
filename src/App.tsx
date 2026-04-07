@@ -1,4 +1,4 @@
-import { Text, Input, Button, Label, Card, CardHeader } from "@fluentui/react-components";
+import { Text, Input, Button, Label } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
