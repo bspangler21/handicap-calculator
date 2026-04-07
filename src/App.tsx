@@ -108,7 +108,7 @@ function App() {
 									<Button
 										appearance="transparent"
 										onClick={() => removeEntry(entry.id)}
-										className="mr-auto! bg-red-400! text-app-background!"
+										className="w-full! bg-red-400! text-app-background!"
 										icon={<DeleteFilled />}
 									>Delete</Button>
 								</div>
