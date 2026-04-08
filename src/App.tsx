@@ -7,6 +7,9 @@ import { calculateHandicap } from "./lib/util";
 import { FluentThemeProvider } from "./providers/fluent-theme-provider";
 import { ThemeProvider } from "./providers/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
+import versionData from "./version.json";
+
+const VERSION = `v1.0.${versionData.version}`;
 
 const EMPTY_ENTRY = (): IEntry => ({
 	id: crypto.randomUUID(),
@@ -18,7 +21,7 @@ const EMPTY_ENTRY = (): IEntry => ({
 });
 
 function App() {
-	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY()]);
+	const [entries, setEntries] = React.useState<IEntry[]>([EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()]);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
 
@@ -55,15 +58,13 @@ function App() {
 			<FluentThemeProvider>
 				<div className="flex flex-col h-full w-full m-0 bg-app-background">
 					{/* Header */}
-					<div className="flex flex-row flex-wrap justify-between items-center bg-primary text-primary-foreground min-h-[50px] w-full box-border p-3">
-						<Text size={600} weight={"semibold"}>
-							Golf Handicap Calculator
-						</Text>
+					<div className="flex flex-row sm:flex-wrap flex-nowrap justify-between items-center bg-primary text-primary-foreground min-h-[50px] w-full box-border p-3">
+						<Text className="text-base! sm:text-xl! font-semibold!">Golf Handicap Calculator</Text>
 						<div className="flex gap-3">
 							<Button
 								onClick={newEntry}
 								appearance="secondary"
-								className="items-center text-xl min-w-[150px]!"
+								className="items-center text-base! sm:text-xl! min-w-[125px]! sm:min-w-[150px]!"
 							>
 								Add Entry
 							</Button>
@@ -76,9 +77,14 @@ function App() {
 						</p>
 						<p className="text-app-foreground p-2 mb-5">
 							The calculator removes your highest and lowest scores, then averages the handicap
-							differential of the remaining scores to determine your handicap index. The formula for
-							handicap differential is <strong>(Score - Course Rating) * 113 / Slope Rating</strong>
-							. Your handicap index is rounded to one decimal place.
+							differential of the remaining scores to determine your handicap index. You only need 3
+							scores to calculate a handicap, but the handicap will be more accurate if you add more
+							scores.
+							<br />
+							<br />
+							The formula for handicap differential is{" "}
+							<strong>(Score - Course Rating) * 113 / Slope Rating</strong>. Your handicap index is
+							rounded to one decimal place.
 						</p>
 					</div>
 					<div className="flex flex-col flex-1 box-border p-2 mx-2 overflow-y-auto">
@@ -99,11 +105,21 @@ function App() {
 						{entries.map((entry) => (
 							<div
 								key={entry.id}
-								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 mb-2"
+								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 sm:mb-2 mb-10"
 							>
-								<div className="w-10! min-w-10! flex items-center">
+								<div className="hidden sm:flex w-10! min-w-10! items-center">
 									<Button appearance="transparent" onClick={() => removeEntry(entry.id)}>
 										<DeleteFilled className="text-lg items-center text-app-foreground" />
+									</Button>
+								</div>
+								<div className="flex sm:hidden w-full">
+									<Button
+										appearance="transparent"
+										onClick={() => removeEntry(entry.id)}
+										className="w-full! bg-red-400! text-app-background!"
+										icon={<DeleteFilled />}
+									>
+										Delete
 									</Button>
 								</div>
 								<div className="flex flex-col flex-1 min-w-0 p-1">
@@ -237,7 +253,7 @@ function App() {
 							)}
 						</div>
 					</div>
-					<div className="flex bg-primary w-full min-h-[50px]"></div>
+					<div className="flex bg-primary w-full min-h-[50px]"><p className="flex h-full text-primary-foreground text-base items-center ml-auto pr-2">{VERSION}</p></div>
 				</div>
 			</FluentThemeProvider>
 		</ThemeProvider>
