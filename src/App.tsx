@@ -1,6 +1,6 @@
-import { Text, Input, Button, Label } from "@fluentui/react-components";
+import { Text, Input, Button, Label, Card, CardHeader } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
-import { DeleteFilled } from "@fluentui/react-icons";
+import { AddRegular, DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
 import React from "react";
 import { calculateHandicap } from "./lib/util";
@@ -68,7 +68,8 @@ function App() {
 							<Button
 								onClick={newEntry}
 								appearance="secondary"
-								className="items-center text-base! sm:text-xl! min-w-[125px]! sm:min-w-[150px]!"
+								className="items-center text-base! sm:text-lg! min-w-[125px]! sm:min-w-[150px]!"
+								icon={<AddRegular />}
 							>
 								Add Entry
 							</Button>
@@ -109,128 +110,137 @@ function App() {
 						{entries.map((entry) => (
 							<div
 								key={entry.id}
-								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 sm:mb-2 mb-10"
+								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 sm:mb-5! mb-2"
 							>
-								<div className="hidden sm:flex w-10! min-w-10! items-center">
-									<Button appearance="transparent" onClick={() => removeEntry(entry.id)}>
-										<DeleteFilled className="text-lg items-center text-app-foreground" />
-									</Button>
-								</div>
-								<div className="flex sm:hidden w-full">
-									<Button
-										appearance="transparent"
-										onClick={() => removeEntry(entry.id)}
-										className="w-full! bg-red-400! text-app-background!"
-										icon={<DeleteFilled />}
-									>
-										Delete
-									</Button>
-								</div>
-								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label
-										size="small"
-										weight="semibold"
-										className="sm:hidden mb-1 text-app-foreground"
-									>
-										Date
-									</Label>
-									<DatePicker
-										className="w-full"
-										value={entry.date}
-										onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
-										showGoToToday={true}
-										allowTextInput={true}
-										highlightCurrentMonth={false}
-										highlightSelectedMonth={true}
-										formatDate={(date?: Date) => (date ? date.toLocaleDateString() : "")}
-										initialPickerDate={entry.date ?? new Date()}
-										parseDateFromString={parseDateFromString}
+								<Card className="flex-1 sm:flex-row! flex-col! w-full! border-gray-300 border">
+									<CardHeader
+										className="sm:hidden! w-full "
+										action={
+											<Button
+												appearance="transparent"
+												onClick={() => removeEntry(entry.id)}
+												className="ml-auto bg-red-400! text-app-background!"
+												icon={<DeleteFilled />}
+											>
+												Delete
+											</Button>
+										}
 									/>
-								</div>
-								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label
-										size="small"
-										weight="semibold"
-										className="sm:hidden mb-1 text-app-foreground"
-									>
-										Course Name
-									</Label>
-									<Input
-										value={entry.courseName}
-										onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-										className="w-full text-app-foreground"
-									/>
-								</div>
-								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label
-										size="small"
-										weight="semibold"
-										className="sm:hidden mb-1 text-app-foreground"
-									>
-										Course Rating
-									</Label>
-									<Input
-										type="number"
-										step="0.1"
-										inputMode="decimal"
-										value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
-										onChange={(e) => {
-											setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
-										}}
-										onBlur={() => {
-											const raw = courseRatingInput[entry.id];
-											if (raw === undefined || raw.trim() === "") {
+									<div className="hidden sm:flex w-10! min-w-10! items-center">
+										<Button
+											appearance="transparent"
+											icon={<DeleteFilled />}
+											size="large"
+											onClick={() => removeEntry(entry.id)}
+											className="min-w-full! min-h-full! flex items-center justify-center p-0! text-red-600!"
+										></Button>
+									</div>
+									<div className="flex flex-col flex-1 min-w-0 p-1">
+										<Label
+											size="small"
+											weight="semibold"
+											className="sm:hidden mb-1 text-app-foreground"
+										>
+											Date
+										</Label>
+										<DatePicker
+											className="w-full"
+											value={entry.date}
+											onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
+											showGoToToday={true}
+											allowTextInput={true}
+											highlightCurrentMonth={false}
+											highlightSelectedMonth={true}
+											formatDate={(date?: Date) => (date ? date.toLocaleDateString() : "")}
+											initialPickerDate={entry.date ?? new Date()}
+											parseDateFromString={parseDateFromString}
+										/>
+									</div>
+									<div className="flex flex-col flex-1 min-w-0 p-1">
+										<Label
+											size="small"
+											weight="semibold"
+											className="sm:hidden mb-1 text-app-foreground"
+										>
+											Course Name
+										</Label>
+										<Input
+											value={entry.courseName}
+											onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
+											className="w-full text-app-foreground"
+										/>
+									</div>
+									<div className="flex flex-col flex-1 min-w-0 p-1">
+										<Label
+											size="small"
+											weight="semibold"
+											className="sm:hidden mb-1 text-app-foreground"
+										>
+											Course Rating
+										</Label>
+										<Input
+											type="number"
+											step="0.1"
+											inputMode="decimal"
+											value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
+											onChange={(e) => {
+												setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
+											}}
+											onBlur={() => {
+												const raw = courseRatingInput[entry.id];
+												if (raw === undefined || raw.trim() === "") {
+													setCourseRatingInput((prev) => {
+														const next = { ...prev };
+														delete next[entry.id];
+														return next;
+													});
+													return;
+												}
+
+												const parsed = Number(raw);
+												if (!Number.isNaN(parsed)) {
+													updateEntry(entry.id, "courseRating", parsed);
+												}
 												setCourseRatingInput((prev) => {
 													const next = { ...prev };
 													delete next[entry.id];
 													return next;
 												});
-												return;
-											}
-
-											const parsed = Number(raw);
-											if (!Number.isNaN(parsed)) {
-												updateEntry(entry.id, "courseRating", parsed);
-											}
-											setCourseRatingInput((prev) => {
-												const next = { ...prev };
-												delete next[entry.id];
-												return next;
-											});
-										}}
-										className="w-full text-app-foreground"
-									/>
-								</div>
-								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label
-										size="small"
-										weight="semibold"
-										className="sm:hidden mb-1 text-app-foreground"
-									>
-										Slope Rating
-									</Label>
-									<Input
-										type="number"
-										value={entry.slopeRating.toString()}
-										onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
-										className="w-full text-app-foreground"
-									/>
-								</div>
-								<div className="flex flex-col flex-1 min-w-0 p-1">
-									<Label
-										size="small"
-										weight="semibold"
-										className="sm:hidden mb-1 text-app-foreground"
-									>
-										Score
-									</Label>
-									<Input
-										type="number"
-										value={entry.score.toString()}
-										onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
-										className="w-full text-app-foreground"
-									/>
-								</div>
+											}}
+											className="w-full text-app-foreground"
+										/>
+									</div>
+									<div className="flex flex-col flex-1 min-w-0 p-1">
+										<Label
+											size="small"
+											weight="semibold"
+											className="sm:hidden mb-1 text-app-foreground"
+										>
+											Slope Rating
+										</Label>
+										<Input
+											type="number"
+											value={entry.slopeRating.toString()}
+											onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
+											className="w-full text-app-foreground"
+										/>
+									</div>
+									<div className="flex flex-col flex-1 min-w-0 p-1">
+										<Label
+											size="small"
+											weight="semibold"
+											className="sm:hidden mb-1 text-app-foreground"
+										>
+											Score
+										</Label>
+										<Input
+											type="number"
+											value={entry.score.toString()}
+											onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
+											className="w-full text-app-foreground"
+										/>
+									</div>
+								</Card>
 							</div>
 						))}
 						<div className="flex flex-col items-center">
@@ -257,7 +267,11 @@ function App() {
 							)}
 						</div>
 					</div>
-					<div className="flex bg-primary w-full min-h-[50px]"><p className="flex h-full text-primary-foreground text-base items-center ml-auto pr-2">{VERSION}</p></div>
+					<div className="flex bg-primary w-full min-h-[50px]">
+						<p className="flex h-full text-primary-foreground text-base items-center ml-auto pr-2">
+							{VERSION}
+						</p>
+					</div>
 				</div>
 			</FluentThemeProvider>
 		</ThemeProvider>
