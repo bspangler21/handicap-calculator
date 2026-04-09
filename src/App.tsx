@@ -63,12 +63,15 @@ function App() {
 				<div className="flex flex-col h-full w-full m-0 bg-app-background">
 					{/* Header */}
 					<div className="flex flex-row sm:flex-wrap flex-nowrap justify-between items-center bg-primary text-primary-foreground min-h-[50px] w-full box-border p-3">
-						<Text className="text-base! sm:text-xl! font-semibold!">Golf Handicap Calculator</Text>
+						<Text className="text-base sm:text-xl font-semibold">Golf Handicap Calculator</Text>
 						<div className="flex gap-3">
 							<Button
-								onClick={newEntry}
+								onClick={() => {
+									newEntry();
+									setHandicapVisible(false);
+								}}
 								appearance="secondary"
-								className="items-center text-base! sm:text-lg! min-w-[125px]! sm:min-w-[150px]!"
+								className="items-center text-base sm:text-lg min-w-[125px] sm:min-w-[150px]"
 								icon={<AddRegular />}
 							>
 								Add Entry
@@ -101,7 +104,7 @@ function App() {
 									key={header}
 									size="large"
 									weight="semibold"
-									className="flex-1 text-center! p-1 text-app-foreground"
+									className="flex-1 text-center p-1 text-app-foreground"
 								>
 									{header}
 								</Label>
@@ -110,29 +113,29 @@ function App() {
 						{entries.map((entry) => (
 							<div
 								key={entry.id}
-								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 sm:mb-5! mb-2"
+								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 sm:mb-5 mb-2"
 							>
-								<Card className="flex-1 sm:flex-row! flex-col! w-full! border-gray-300 border">
+								<Card className="flex-1 sm:flex-row flex-col w-full border-gray-300 border">
 									<CardHeader
-										className="sm:hidden! w-full "
+										className="sm:hidden w-full "
 										action={
 											<Button
 												appearance="transparent"
 												onClick={() => removeEntry(entry.id)}
-												className="ml-auto bg-red-400! text-app-background!"
+												className="ml-auto bg-red-400 text-app-background"
 												icon={<DeleteFilled />}
 											>
 												Delete
 											</Button>
 										}
 									/>
-									<div className="hidden sm:flex w-10! min-w-10! items-center">
+									<div className="hidden sm:flex w-10 min-w-10 items-center">
 										<Button
 											appearance="transparent"
 											icon={<DeleteFilled />}
 											size="large"
 											onClick={() => removeEntry(entry.id)}
-											className="min-w-full! min-h-full! flex items-center justify-center p-0! text-red-600!"
+											className="min-w-full min-h-full flex items-center justify-center p-0 text-red-600"
 										></Button>
 									</div>
 									<div className="flex flex-col flex-1 min-w-0 p-1">
@@ -185,6 +188,7 @@ function App() {
 											value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
 											onChange={(e) => {
 												setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
+												setHandicapVisible(false);
 											}}
 											onBlur={() => {
 												const raw = courseRatingInput[entry.id];
@@ -221,7 +225,10 @@ function App() {
 										<Input
 											type="number"
 											value={entry.slopeRating.toString()}
-											onChange={(e) => updateEntry(entry.id, "slopeRating", Number(e.target.value))}
+											onChange={(e) => {
+												updateEntry(entry.id, "slopeRating", Number(e.target.value));
+												setHandicapVisible(false);
+											}}
 											className="w-full text-app-foreground"
 										/>
 									</div>
@@ -236,7 +243,10 @@ function App() {
 										<Input
 											type="number"
 											value={entry.score.toString()}
-											onChange={(e) => updateEntry(entry.id, "score", Number(e.target.value))}
+											onChange={(e) => {
+												updateEntry(entry.id, "score", Number(e.target.value));
+												setHandicapVisible(false);
+											}}
 											className="w-full text-app-foreground"
 										/>
 									</div>
@@ -254,7 +264,7 @@ function App() {
 								onClick={() => {
 									setHandicapVisible(true);
 								}}
-								className="min-w-[200px]!"
+								className="min-w-[200px]"
 							>
 								Calculate Handicap
 							</Button>
