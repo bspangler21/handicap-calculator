@@ -24,7 +24,7 @@ Single-page React app with no routing. All UI lives in `src/App.tsx` — one com
 - `calculateHandicap` in `src/lib/util.ts` takes the 6 most recent entries, drops the lowest and highest scores, then averages `(Score - Course Rating) * 113 / Slope Rating` across the remaining entries
 
 **UI stack:**
-- Fluent UI v9 (`@fluentui/react-components`) for all form controls and typography; theme defined in `src/main.tsx` using a custom "The Masters" green brand palette
+- Theme defined in `src/main.tsx` using a custom "The Masters" green brand palette
 - Tailwind CSS v4 (via `@tailwindcss/vite` plugin) for layout; CSS custom property `--background` holds the header/footer green (`#4E705C`)
 - Responsive layout: column headers and row direction switch at Tailwind's `sm` breakpoint (≥640px); mobile shows stacked fields with inline labels
 

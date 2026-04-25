@@ -1,13 +1,10 @@
-import { Text, Input, Button, Label, Card, CardHeader } from "@fluentui/react-components";
-import { DatePicker } from "@fluentui/react-datepicker-compat";
-import { AddRegular, DeleteFilled } from "@fluentui/react-icons";
-import type { IEntry } from "./types/IEntry";
 import React from "react";
-import { calculateHandicap } from "./lib/util";
-import { FluentThemeProvider } from "./providers/fluent-theme-provider";
-import { ThemeProvider } from "./providers/theme-provider";
-import { ModeToggle } from "./components/mode-toggle";
-import versionData from "./version.json";
+import { ModeToggle } from "@/components/mode-toggle";
+import { calculateHandicap } from "@/lib/util";
+import { ThemeProvider } from "@/providers/theme-provider";
+import type { IEntry } from "@/types/IEntry";
+import versionData from "@/version.json";
+import { Plus, Trash2 } from "lucide-react";
 
 const VERSION = `v1.0.${versionData.version}`;
 
@@ -20,7 +17,13 @@ const EMPTY_ENTRY = (): IEntry => ({
 	score: 0,
 });
 
-function App() {
+interface AppProps {}
+
+function formatDateForInput(date: Date): string {
+	return date.toISOString().slice(0, 10);
+}
+
+export function App({}: AppProps) {
 	const [entries, setEntries] = React.useState<IEntry[]>([
 		EMPTY_ENTRY(),
 		EMPTY_ENTRY(),
@@ -31,24 +34,18 @@ function App() {
 
 	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
 
-	const parseDateFromString = React.useCallback((dateString: string): Date => {
-		const [month, day, year] = dateString.trim().split("/").map(Number);
-		return new Date(year, month - 1, day);
-	}, []);
-
-	const newEntry = (): void => {
-		const entry = EMPTY_ENTRY();
-		setEntries((prev) => [...prev, entry]);
+	const newEntry = () => {
+		setEntries((prev) => [...prev, EMPTY_ENTRY()]);
 	};
 
-	const updateEntry = (id: string, field: keyof IEntry, value: string | number | Date): void => {
+	const updateEntry = (id: string, field: keyof IEntry, value: string | number | Date) => {
 		setEntries((prev) =>
 			prev.map((entry) => (entry.id === id ? { ...entry, [field]: value } : entry))
 		);
 	};
 
-	const removeEntry = (id: string): void => {
-		setEntries((prev) => prev.filter((e) => e.id !== id));
+	const removeEntry = (id: string) => {
+		setEntries((prev) => prev.filter((entry) => entry.id !== id));
 		setCourseRatingInput((prev) => {
 			const next = { ...prev };
 			delete next[id];
@@ -59,31 +56,32 @@ function App() {
 
 	return (
 		<ThemeProvider defaultTheme="light" storageKey="theme">
-			<FluentThemeProvider>
-				<div className="flex flex-col h-full w-full m-0 bg-app-background">
-					{/* Header */}
-					<div className="flex flex-row sm:flex-wrap flex-nowrap justify-between items-center bg-primary text-primary-foreground min-h-[50px] w-full box-border p-3">
-						<Text className="text-base sm:text-xl font-semibold">Golf Handicap Calculator</Text>
-						<div className="flex gap-3">
-							<Button
-								onClick={() => {
-									newEntry();
-									setHandicapVisible(false);
-								}}
-								appearance="secondary"
-								className="items-center text-base sm:text-lg min-w-[125px] sm:min-w-[150px]"
-								icon={<AddRegular />}
-							>
-								Add Entry
-							</Button>
-							<ModeToggle />
-						</div>
+			<div className="flex min-h-screen w-full flex-col bg-app-background text-app-foreground">
+				<header className="flex min-h-12.5 w-full items-center justify-between bg-primary px-3 text-primary-foreground">
+					<h1 className="text-base font-semibold sm:text-xl">Golf Handicap Calculator</h1>
+					<div className="flex items-center gap-3">
+						<button
+							type="button"
+							onClick={() => {
+								newEntry();
+								setHandicapVisible(false);
+							}}
+							className="inline-flex min-w-31.25 items-center gap-2 rounded border border-black/10 bg-white px-4 py-2 text-base text-slate-900 shadow-sm transition hover:bg-slate-50 active:translate-y-px sm:min-w-37.5 sm:text-lg"
+							aria-label="Add Entry"
+						>
+							<Plus className="h-4 w-4" />
+							Add Entry
+						</button>
+						<ModeToggle />
 					</div>
-					<div>
-						<p className="text-lg text-app-foreground font-semibold p-2">
+				</header>
+
+				<main className="flex flex-1 flex-col overflow-y-auto px-2 py-2">
+					<section className="mb-5 px-2">
+						<p className="p-2 text-lg font-semibold">
 							To get started, add at least three entries, then click "Calculate Handicap".
 						</p>
-						<p className="text-app-foreground p-2 mb-5">
+						<p className="mb-5 p-2">
 							The calculator removes your highest and lowest scores, then averages the handicap
 							differential of the remaining scores to determine your handicap index. You only need 3
 							scores to calculate a handicap, but the handicap will be more accurate if you add more
@@ -94,198 +92,156 @@ function App() {
 							<strong>(Score - Course Rating) * 113 / Slope Rating</strong>. Your handicap index is
 							rounded to one decimal place.
 						</p>
-					</div>
-					<div className="flex flex-col flex-1 box-border p-2 mx-2 overflow-y-auto">
-						{/* Column headers — hidden on mobile, visible on sm+ */}
-						<div className="hidden sm:flex flex-row w-full box-border p-1 gap-10">
+					</section>
+
+					<section className="flex flex-1 flex-col">
+						<div className="hidden w-full flex-row gap-10 px-1 py-1 sm:flex">
 							<div className="w-10 min-w-10 shrink-0" />
 							{columnHeaders.map((header) => (
-								<Label
-									key={header}
-									size="large"
-									weight="semibold"
-									className="flex-1 text-center p-1 text-app-foreground"
-								>
+								<span key={header} className="flex-1 p-1 text-center font-semibold">
 									{header}
-								</Label>
+								</span>
 							))}
 						</div>
+
 						{entries.map((entry) => (
 							<div
 								key={entry.id}
-								className="flex flex-col sm:flex-row w-full box-border p-1 gap-2 sm:gap-10 sm:mb-5 mb-2"
+								className="mb-2 flex w-full flex-col gap-2 rounded-md bg-white p-1 shadow-[0_1px_3px_rgba(0,0,0,0.12)] sm:mb-5 sm:flex-row sm:items-stretch sm:gap-10"
 							>
-								<Card className="flex-1 sm:flex-row flex-col w-full border-gray-300 border">
-									<CardHeader
-										className="sm:hidden w-full "
-										action={
-											<Button
-												appearance="transparent"
-												onClick={() => removeEntry(entry.id)}
-												className="ml-auto bg-red-400 text-app-background"
-												icon={<DeleteFilled />}
-											>
-												Delete
-											</Button>
-										}
-									/>
-									<div className="hidden sm:flex w-10 min-w-10 items-center">
-										<Button
-											appearance="transparent"
-											icon={<DeleteFilled />}
-											size="large"
-											onClick={() => removeEntry(entry.id)}
-											className="min-w-full min-h-full flex items-center justify-center p-0 text-red-600"
-										></Button>
-									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
-											Date
-										</Label>
-										<DatePicker
-											className="w-full"
-											value={entry.date}
-											onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
-											showGoToToday={true}
-											allowTextInput={true}
-											highlightCurrentMonth={false}
-											highlightSelectedMonth={true}
-											formatDate={(date?: Date) => (date ? date.toLocaleDateString() : "")}
-											initialPickerDate={entry.date ?? new Date()}
-											parseDateFromString={parseDateFromString}
-										/>
-									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
-											Course Name
-										</Label>
-										<Input
-											value={entry.courseName}
-											onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-											className="w-full text-app-foreground"
-										/>
-									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
-											Course Rating
-										</Label>
-										<Input
-											type="number"
-											step="0.1"
-											inputMode="decimal"
-											value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
-											onChange={(e) => {
-												setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
-												setHandicapVisible(false);
-											}}
-											onBlur={() => {
-												const raw = courseRatingInput[entry.id];
-												if (raw === undefined || raw.trim() === "") {
-													setCourseRatingInput((prev) => {
-														const next = { ...prev };
-														delete next[entry.id];
-														return next;
-													});
-													return;
-												}
+								<div className="flex justify-end px-1 pt-1 sm:hidden">
+									<button
+										type="button"
+										onClick={() => removeEntry(entry.id)}
+										className="flex h-8 w-8 items-center justify-center rounded text-red-600"
+										aria-label={`Delete entry ${entry.courseName || ""}`.trim()}
+									>
+										<Trash2 className="h-5 w-5" />
+									</button>
+								</div>
 
-												const parsed = Number(raw);
-												if (!Number.isNaN(parsed)) {
-													updateEntry(entry.id, "courseRating", parsed);
-												}
+								<div className="hidden w-10 min-w-10 items-center sm:flex">
+									<button
+										type="button"
+										onClick={() => removeEntry(entry.id)}
+										className="flex h-8 w-8 items-center justify-center rounded text-red-600"
+										aria-label={`Delete entry ${entry.courseName || ""}`.trim()}
+									>
+										<Trash2 className="h-5 w-5" />
+									</button>
+								</div>
+
+								<div className="flex flex-col min-w-0 flex-1 p-1">
+									<label className="mb-1 text-sm font-semibold sm:hidden">Date</label>
+									<input
+										type="date"
+										value={formatDateForInput(entry.date)}
+										onChange={(e) => updateEntry(entry.id, "date", new Date(e.target.value))}
+										className="w-full rounded border px-2 py-1"
+									/>
+								</div>
+
+								<div className="flex flex-col min-w-0 flex-1 p-1">
+									<label className="mb-1 text-sm font-semibold sm:hidden">Course Name</label>
+									<input
+										type="text"
+										value={entry.courseName}
+										onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
+										className="w-full rounded border px-2 py-1"
+									/>
+								</div>
+
+								<div className="flex flex-col min-w-0 flex-1 p-1">
+									<label className="mb-1 text-sm font-semibold sm:hidden">Course Rating</label>
+									<input
+										type="number"
+										step="0.1"
+										value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
+										onChange={(e) => {
+											setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
+											setHandicapVisible(false);
+										}}
+										onBlur={() => {
+											const raw = courseRatingInput[entry.id];
+											if (raw === undefined || raw.trim() === "") {
 												setCourseRatingInput((prev) => {
 													const next = { ...prev };
 													delete next[entry.id];
 													return next;
 												});
-											}}
-											className="w-full text-app-foreground"
-										/>
-									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
-											Slope Rating
-										</Label>
-										<Input
-											type="number"
-											value={entry.slopeRating.toString()}
-											onChange={(e) => {
-												updateEntry(entry.id, "slopeRating", Number(e.target.value));
-												setHandicapVisible(false);
-											}}
-											className="w-full text-app-foreground"
-										/>
-									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
-											Score
-										</Label>
-										<Input
-											type="number"
-											value={entry.score.toString()}
-											onChange={(e) => {
-												updateEntry(entry.id, "score", Number(e.target.value));
-												setHandicapVisible(false);
-											}}
-											className="w-full text-app-foreground"
-										/>
-									</div>
-								</Card>
+												return;
+											}
+
+											const parsed = Number(raw);
+											if (!Number.isNaN(parsed)) {
+												updateEntry(entry.id, "courseRating", parsed);
+											}
+											setCourseRatingInput((prev) => {
+												const next = { ...prev };
+												delete next[entry.id];
+												return next;
+											});
+										}}
+										className="w-full rounded border px-2 py-1"
+									/>
+								</div>
+
+								<div className="flex flex-col min-w-0 flex-1 p-1">
+									<label className="mb-1 text-sm font-semibold sm:hidden">Slope Rating</label>
+									<input
+										type="number"
+										value={entry.slopeRating.toString()}
+										onChange={(e) => {
+											updateEntry(entry.id, "slopeRating", Number(e.target.value));
+											setHandicapVisible(false);
+										}}
+										className="w-full rounded border px-2 py-1"
+									/>
+								</div>
+
+								<div className="flex flex-col min-w-0 flex-1 p-1">
+									<label className="mb-1 text-sm font-semibold sm:hidden">Score</label>
+									<input
+										type="number"
+										value={entry.score.toString()}
+										onChange={(e) => {
+											updateEntry(entry.id, "score", Number(e.target.value));
+											setHandicapVisible(false);
+										}}
+										className="w-full rounded border px-2 py-1"
+									/>
+								</div>
 							</div>
 						))}
-						<div className="flex flex-col items-center">
-							<Button
-								appearance="primary"
+
+						<div className="flex flex-col items-center py-3">
+							<button
+								type="button"
 								disabled={
 									entries.filter(
 										(entry) => entry.score > 0 && entry.courseRating > 0 && entry.slopeRating > 0
 									).length < 3
 								}
-								onClick={() => {
-									setHandicapVisible(true);
-								}}
-								className="min-w-[200px]"
+								onClick={() => setHandicapVisible(true)}
+								className="min-w-50 rounded bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50 disabled:bg-[#d9d9d9] disabled:text-[#a9a9a9]"
+								aria-label="Calculate Handicap"
 							>
 								Calculate Handicap
-							</Button>
+							</button>
 						</div>
-						<div>
-							{handicapVisible && (
-								<Text size={500} weight="semibold" className="text-app-foreground">
-									Your Handicap: {calculateHandicap(entries)}
-								</Text>
-							)}
-						</div>
-					</div>
-					<div className="flex bg-primary w-full min-h-[50px]">
-						<p className="flex h-full text-primary-foreground text-base items-center ml-auto pr-2">
-							{VERSION}
-						</p>
-					</div>
-				</div>
-			</FluentThemeProvider>
+
+						{handicapVisible ? (
+							<p className="px-2 py-3 text-lg font-semibold text-app-foreground">
+								Your Handicap: {calculateHandicap(entries)}
+							</p>
+						) : null}
+					</section>
+				</main>
+
+				<footer className="flex min-h-12.5 w-full items-center bg-primary">
+					<p className="ml-auto pr-2 text-base leading-none text-primary-foreground">{VERSION}</p>
+				</footer>
+			</div>
 		</ThemeProvider>
 	);
 }
-
-export default App;
