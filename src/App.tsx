@@ -2,7 +2,7 @@ import { Text, Input, Button, Label, Card, CardHeader } from "@fluentui/react-co
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { AddRegular, DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
-import React from "react";
+import React, { useCallback } from "react";
 import { calculateHandicap } from "./lib/util";
 import { FluentThemeProvider } from "./providers/fluent-theme-provider";
 import { ThemeProvider } from "./providers/theme-provider";
@@ -33,6 +33,7 @@ function App() {
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
 
 	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
+	let csvContent = "Date,Course Name,Course Rating,Slope Rating,Score\n";
 
 	const parseDateFromString = React.useCallback((dateString: string): Date => {
 		const [month, day, year] = dateString.trim().split("/").map(Number);
@@ -60,8 +61,22 @@ function App() {
 		setHandicapVisible(false);
 	};
 
-	console.log("entries", entries);
-	console.log("window.location.hostname", window.location.hostname);
+	const exportData = () => {
+		entries.map((entry) => {
+			csvContent += `${entry.date.toLocaleDateString()},${entry.courseName.replaceAll(",", "")},${entry.courseRating},${entry.slopeRating},${entry.score.toString()}\n`;
+		})
+		const blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = "handicap-scores.csv"
+		link.click();
+		URL.revokeObjectURL(url);
+	}
+
+	// const parseFile = useCallback((file: File) => {
+	// 	setFileName()
+	// })
 
 	return (
 		<ThemeProvider defaultTheme="light" storageKey="theme">
@@ -71,6 +86,17 @@ function App() {
 					<div className="flex flex-row sm:flex-wrap flex-nowrap justify-between items-center bg-primary text-primary-foreground min-h-[50px] w-full box-border p-3">
 						<Text className="text-base sm:text-xl font-semibold">Golf Handicap Calculator</Text>
 						<div className="flex gap-3">
+							<Button
+								onClick={() => {
+									newEntry();
+									setHandicapVisible(false);
+								}}
+								appearance="secondary"
+								className="invisible items-center text-base sm:text-lg min-w-[125px] sm:min-w-[150px]"
+								icon={<AddRegular />}
+							>
+								Add Entry
+							</Button>
 							<Button
 								onClick={() => {
 									newEntry();
@@ -277,9 +303,12 @@ function App() {
 						</div>
 						<div>
 							{handicapVisible && (
-								<Text size={500} weight="semibold" className="text-app-foreground">
-									Your Handicap: {calculateHandicap(entries)}
-								</Text>
+								<div>
+									<Text size={500} weight="semibold" className="text-app-foreground">
+										Your Handicap: {calculateHandicap(entries)}
+									</Text>
+									<Button className="block mt-2 bg-secondary-button text-secondary-text" appearance="primary" onClick={exportData}>Export Data</Button>
+								</div>
 							)}
 						</div>
 					</div>
