@@ -2,11 +2,11 @@ import { Text, Input, Button, Label, Card, CardHeader } from "@fluentui/react-co
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { AddRegular, DeleteFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
-import React, { useCallback } from "react";
+import React from "react";
 import { calculateHandicap } from "./lib/util";
-import { FluentThemeProvider } from "./providers/fluent-theme-provider";
-import { ThemeProvider } from "./providers/theme-provider";
-import { ModeToggle } from "./components/mode-toggle";
+import { FluentThemeProvider } from "./providers/FluentThemeProvider";
+import { ThemeProvider } from "./providers/ThemeProvider";
+import { ModeToggle } from "./components/ModeToggle";
 import versionData from "./version.json";
 import { mockScores } from "./mockData/mockScores";
 
@@ -64,15 +64,15 @@ function App() {
 	const exportData = () => {
 		entries.map((entry) => {
 			csvContent += `${entry.date.toLocaleDateString()},${entry.courseName.replaceAll(",", "")},${entry.courseRating},${entry.slopeRating},${entry.score.toString()}\n`;
-		})
-		const blob = new Blob([csvContent], {type: "text/csv;charset=utf-8"});
+		});
+		const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement("a");
 		link.href = url;
-		link.download = "handicap-scores.csv"
+		link.download = "handicap-scores.csv";
 		link.click();
 		URL.revokeObjectURL(url);
-	}
+	};
 
 	// const parseFile = useCallback((file: File) => {
 	// 	setFileName()
@@ -307,7 +307,13 @@ function App() {
 									<Text size={500} weight="semibold" className="text-app-foreground">
 										Your Handicap: {calculateHandicap(entries)}
 									</Text>
-									<Button className="block mt-2 bg-secondary-button text-secondary-text" appearance="primary" onClick={exportData}>Export Data</Button>
+									<Button
+										className="block mt-2 bg-secondary-button text-secondary-text"
+										appearance="primary"
+										onClick={exportData}
+									>
+										Export Data
+									</Button>
 								</div>
 							)}
 						</div>
