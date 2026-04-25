@@ -8,8 +8,10 @@ import { FluentThemeProvider } from "./providers/fluent-theme-provider";
 import { ThemeProvider } from "./providers/theme-provider";
 import { ModeToggle } from "./components/mode-toggle";
 import versionData from "./version.json";
+import { mockScores } from "./mockData/mockScores";
 
 const VERSION = `v1.0.${versionData.version}`;
+const mockEntries: IEntry[] = mockScores;
 
 const EMPTY_ENTRY = (): IEntry => ({
 	id: crypto.randomUUID(),
@@ -20,12 +22,13 @@ const EMPTY_ENTRY = (): IEntry => ({
 	score: 0,
 });
 
+const createInitialEntries = (): IEntry[] =>
+	window.location.hostname === "localhost"
+		? [...mockEntries]
+		: [EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()];
+
 function App() {
-	const [entries, setEntries] = React.useState<IEntry[]>([
-		EMPTY_ENTRY(),
-		EMPTY_ENTRY(),
-		EMPTY_ENTRY(),
-	]);
+	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries());
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
 
@@ -56,6 +59,9 @@ function App() {
 		});
 		setHandicapVisible(false);
 	};
+
+	console.log("entries", entries);
+	console.log("window.location.hostname", window.location.hostname);
 
 	return (
 		<ThemeProvider defaultTheme="light" storageKey="theme">
