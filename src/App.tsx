@@ -1,4 +1,4 @@
-import { Text, Input, Button, Label, Card, CardHeader, Tooltip } from "@fluentui/react-components";
+import { Text, Input, Button, Label, Card, CardHeader, Tooltip, Checkbox } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import { DeleteFilled, ArrowDownloadFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
@@ -15,6 +15,12 @@ import { useFileImport } from "./hooks/useFileImport";
 import { Footer } from "./components/Footer";
 
 const mockEntries: IEntry[] = mockScores;
+
+const tailwindStyles = {
+	inputContainer: "flex flex-col flex-1 min-w-0 p-1",
+	mobileLabel: "sm:hidden mb-1 text-app-foreground",
+	input: "w-full text-app-foreground"
+};
 
 const EMPTY_ENTRY = (): IEntry => ({
 	id: crypto.randomUUID(),
@@ -143,7 +149,11 @@ function App() {
 									key={header}
 									size="large"
 									weight="semibold"
-									className="flex-1 text-center p-1 text-app-foreground"
+									className={
+										header === "Score"
+											? `flex-2 text-center p-1 text-app-foreground`
+											: `flex-1 text-center p-1 text-app-foreground`
+									}
 								>
 									{header}
 								</Label>
@@ -177,16 +187,12 @@ function App() {
 											className="min-w-full min-h-full flex items-center justify-center p-0 text-red-600"
 										></Button>
 									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
+									<div className={tailwindStyles.inputContainer}>
+										<Label size="small" weight="semibold" className={tailwindStyles.mobileLabel}>
 											Date
 										</Label>
 										<DatePicker
-											className="w-full"
+											className={tailwindStyles.input}
 											value={entry.date}
 											onSelectDate={(date) => date && updateEntry(entry.id, "date", date)}
 											showGoToToday={true}
@@ -198,26 +204,18 @@ function App() {
 											parseDateFromString={parseDateFromString}
 										/>
 									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
+									<div className={tailwindStyles.inputContainer}>
+										<Label size="small" weight="semibold" className={tailwindStyles.mobileLabel}>
 											Course Name
 										</Label>
 										<Input
 											value={entry.courseName}
 											onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-											className="w-full text-app-foreground"
+											className={tailwindStyles.input}
 										/>
 									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
+									<div className={tailwindStyles.inputContainer}>
+										<Label size="small" weight="semibold" className={tailwindStyles.mobileLabel}>
 											Course Rating
 										</Label>
 										<Input
@@ -250,15 +248,11 @@ function App() {
 													return next;
 												});
 											}}
-											className="w-full text-app-foreground"
+											className={tailwindStyles.input}
 										/>
 									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
+									<div className={tailwindStyles.inputContainer}>
+										<Label size="small" weight="semibold" className={tailwindStyles.mobileLabel}>
 											Slope Rating
 										</Label>
 										<Input
@@ -268,26 +262,33 @@ function App() {
 												updateEntry(entry.id, "slopeRating", Number(e.target.value));
 												setHandicapVisible(false);
 											}}
-											className="w-full text-app-foreground"
+											className={tailwindStyles.input}
 										/>
 									</div>
-									<div className="flex flex-col flex-1 min-w-0 p-1">
-										<Label
-											size="small"
-											weight="semibold"
-											className="sm:hidden mb-1 text-app-foreground"
-										>
-											Score
-										</Label>
-										<Input
-											type="number"
-											value={entry.score.toString()}
-											onChange={(e) => {
-												updateEntry(entry.id, "score", Number(e.target.value));
-												setHandicapVisible(false);
-											}}
-											className="w-full text-app-foreground"
-										/>
+									<div className="flex flex-col flex-2 min-w-0 p-1">
+										<div className="flex flex-row gap-1">
+											<div className="flex flex-1">
+												<Label
+													size="small"
+													weight="semibold"
+													className={tailwindStyles.mobileLabel}
+												>
+													Score
+												</Label>
+												<Input
+													type="number"
+													value={entry.score.toString()}
+													onChange={(e) => {
+														updateEntry(entry.id, "score", Number(e.target.value));
+														setHandicapVisible(false);
+													}}
+													className={tailwindStyles.input}
+												/>
+											</div>
+											<div className="flex mx-auto">
+												<Checkbox label={"9-hole score"} />
+											</div>
+										</div>
 									</div>
 								</Card>
 							</div>
