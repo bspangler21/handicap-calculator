@@ -7,7 +7,7 @@ import {
 	Button,
 } from "@fluentui/react-components";
 import { WeatherMoonRegular, WeatherSunnyRegular } from "@fluentui/react-icons";
-import { useTheme } from "../hooks/use-theme";
+import { useTheme } from "../hooks/useTheme";
 
 export function ModeToggle() {
 	const { theme, setTheme } = useTheme();
@@ -21,7 +21,10 @@ export function ModeToggle() {
 						theme === "dark" ? (
 							<WeatherMoonRegular />
 						) : (
-							<WeatherSunnyRegular primaryFill="#FFFFFF" className="hover:text-background hover:fill-black" />
+							<WeatherSunnyRegular
+								primaryFill="#FFFFFF"
+								className="hover:text-background hover:fill-black"
+							/>
 						)
 					}
 					aria-label="Toggle theme"
