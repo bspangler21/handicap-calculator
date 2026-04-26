@@ -44,6 +44,14 @@ function App() {
 		return new Date(year, month - 1, day);
 	}, []);
 
+	const getEligibleEntries = (): IEntry[] => {
+		return (
+			entries.filter(
+				(entry) => entry.score > 0 && entry.courseRating > 0 && entry.slopeRating > 0
+			) ?? 0
+		);
+	};
+
 	const newEntry = (): void => {
 		const entry = EMPTY_ENTRY();
 		setEntries((prev) => [...prev, entry]);
@@ -287,11 +295,7 @@ function App() {
 						<div className="flex flex-col items-center">
 							<Button
 								appearance="primary"
-								disabled={
-									entries.filter(
-										(entry) => entry.score > 0 && entry.courseRating > 0 && entry.slopeRating > 0
-									).length < 3
-								}
+								disabled={getEligibleEntries().length < 3}
 								onClick={() => {
 									setHandicapVisible(true);
 								}}
@@ -305,7 +309,7 @@ function App() {
 								<div>
 									<div>
 										<Text size={500} weight="semibold" className="text-app-foreground">
-											Your Handicap: {calculateHandicap(entries)}
+											Your Handicap: {calculateHandicap(getEligibleEntries())}
 										</Text>
 									</div>
 									<div className="flex items-center mt-4">

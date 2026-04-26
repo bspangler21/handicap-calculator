@@ -33,7 +33,7 @@ export function parseFile(text: string): IFileImportResult {
 				{
 					rowIndex: 0,
 					raw: lines[0],
-					reason: `Invalid header. Expected: "${EXPECTED_HEADERS.join(", ")}", got "${lines[0]}"`,
+					reason: `Invalid header. Expected: "${EXPECTED_HEADERS.join(",")}", got "${lines[0]}"`,
 				},
 			],
 		};
