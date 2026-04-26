@@ -1,4 +1,4 @@
-import { Text, Input, Button, Label, Card, CardHeader } from "@fluentui/react-components";
+import { Text, Input, Button, Label, Card, CardHeader, Tooltip } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
 import {
 	AddRegular,
@@ -14,12 +14,11 @@ import { FluentThemeProvider } from "./providers/FluentThemeProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { ModeToggle } from "./components/ModeToggle";
 import { ImportResultMessageBar } from "./components/ImportResultMessageBar";
-import versionData from "./version.json";
 import { mockScores } from "./mockData/mockScores";
 import { COLUMN_HEADERS } from "./lib/constants";
 import { useFileImport } from "./hooks/useFileImport";
+import { Footer } from "./components/Footer";
 
-const VERSION = `v1.0.${versionData.version}`;
 const mockEntries: IEntry[] = mockScores;
 
 const EMPTY_ENTRY = (): IEntry => ({
@@ -333,25 +332,27 @@ function App() {
 											Your Handicap: {calculateHandicap(entries)}
 										</Text>
 									</div>
-									<div>
-										<Button
-											className="mt-2 bg-secondary-button text-secondary-text items-center min-w-[125px]"
-											appearance="primary"
-											onClick={exportData}
-											icon={<ArrowDownloadFilled />}
+									<div className="flex items-center mt-4">
+										<Tooltip
+											content="Download your scores so they can be re-imported to the tool at a later date."
+											relationship="label"
+											positioning={"below-end"}
 										>
-											Export Data
-										</Button>
+											<Button
+												className="bg-secondary-button text-secondary-text items-center min-w-[125px]"
+												appearance="primary"
+												onClick={exportData}
+												icon={<ArrowDownloadFilled />}
+											>
+												Export Data
+											</Button>
+										</Tooltip>
 									</div>
 								</div>
 							)}
 						</div>
 					</div>
-					<div className="flex bg-primary w-full min-h-[50px]">
-						<p className="flex h-full text-primary-foreground text-base items-center ml-auto pr-2">
-							{VERSION}
-						</p>
-					</div>
+					<Footer />
 				</div>
 			</FluentThemeProvider>
 			<input
