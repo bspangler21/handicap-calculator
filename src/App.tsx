@@ -1,14 +1,23 @@
 import { Text, Input, Button, Label, Card, CardHeader } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
-import { AddRegular, DeleteFilled } from "@fluentui/react-icons";
+import {
+	AddRegular,
+	DeleteFilled,
+	DocumentArrowUpRegular,
+	ArrowDownloadFilled,
+} from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
+import type { IFileImportResult } from "./types/IFileImportResult";
 import React from "react";
 import { calculateHandicap } from "./lib/util";
 import { FluentThemeProvider } from "./providers/FluentThemeProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { ModeToggle } from "./components/ModeToggle";
+import { ImportResultMessageBar } from "./components/ImportResultMessageBar";
 import versionData from "./version.json";
 import { mockScores } from "./mockData/mockScores";
+import { COLUMN_HEADERS } from "./lib/constants";
+import { useFileImport } from "./hooks/useFileImport";
 
 const VERSION = `v1.0.${versionData.version}`;
 const mockEntries: IEntry[] = mockScores;
@@ -31,9 +40,10 @@ function App() {
 	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries());
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
+	const [importResult, setImportResult] = React.useState<IFileImportResult | null>(null);
 
-	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
-	let csvContent = "Date,Course Name,Course Rating,Slope Rating,Score\n";
+	const columnHeaders = COLUMN_HEADERS;
+	let csvContent = `${columnHeaders.join(",")}\n`;
 
 	const parseDateFromString = React.useCallback((dateString: string): Date => {
 		const [month, day, year] = dateString.trim().split("/").map(Number);
@@ -69,10 +79,20 @@ function App() {
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement("a");
 		link.href = url;
-		link.download = "handicap-scores.csv";
+		link.download = "golf-handicap-calculator-scores.csv";
 		link.click();
 		URL.revokeObjectURL(url);
 	};
+
+	const handleImport = React.useCallback((result: IFileImportResult) => {
+		setImportResult(result);
+		if (result.imported.length > 0) {
+			setEntries(result.imported);
+			setHandicapVisible(false);
+		}
+	}, []);
+
+	const { fileInputRef, triggerFilePicker, handleFileChange } = useFileImport(handleImport);
 
 	// const parseFile = useCallback((file: File) => {
 	// 	setFileName()
@@ -87,15 +107,12 @@ function App() {
 						<Text className="text-base sm:text-xl font-semibold">Golf Handicap Calculator</Text>
 						<div className="flex gap-3">
 							<Button
-								onClick={() => {
-									newEntry();
-									setHandicapVisible(false);
-								}}
+								onClick={triggerFilePicker}
 								appearance="secondary"
-								className="invisible items-center text-base sm:text-lg min-w-[125px] sm:min-w-[150px]"
-								icon={<AddRegular />}
+								className="bg-slate-600 text-secondary-text items-center text-base sm:text-lg min-w-[125px] sm:min-w-[150px]"
+								icon={<DocumentArrowUpRegular />}
 							>
-								Add Entry
+								Import CSV
 							</Button>
 							<Button
 								onClick={() => {
@@ -127,6 +144,13 @@ function App() {
 							rounded to one decimal place.
 						</p>
 					</div>
+					{importResult && (
+						<ImportResultMessageBar
+							importedCount={importResult.imported.length}
+							skipped={importResult.skipped}
+							onDismiss={() => setImportResult(null)}
+						/>
+					)}
 					<div className="flex flex-col flex-1 box-border p-2 mx-2 overflow-y-auto">
 						{/* Column headers — hidden on mobile, visible on sm+ */}
 						<div className="hidden sm:flex flex-row w-full box-border p-1 gap-10">
@@ -149,7 +173,7 @@ function App() {
 							>
 								<Card className="flex-1 sm:flex-row flex-col w-full border-gray-300 border">
 									<CardHeader
-										className="sm:hidden w-full "
+										className="sm:hidden w-full"
 										action={
 											<Button
 												appearance="transparent"
@@ -301,19 +325,24 @@ function App() {
 								Calculate Handicap
 							</Button>
 						</div>
-						<div>
+						<div className="mt-4">
 							{handicapVisible && (
 								<div>
-									<Text size={500} weight="semibold" className="text-app-foreground">
-										Your Handicap: {calculateHandicap(entries)}
-									</Text>
-									<Button
-										className="block mt-2 bg-secondary-button text-secondary-text"
-										appearance="primary"
-										onClick={exportData}
-									>
-										Export Data
-									</Button>
+									<div>
+										<Text size={500} weight="semibold" className="text-app-foreground">
+											Your Handicap: {calculateHandicap(entries)}
+										</Text>
+									</div>
+									<div>
+										<Button
+											className="mt-2 bg-secondary-button text-secondary-text items-center min-w-[125px]"
+											appearance="primary"
+											onClick={exportData}
+											icon={<ArrowDownloadFilled />}
+										>
+											Export Data
+										</Button>
+									</div>
 								</div>
 							)}
 						</div>
@@ -325,6 +354,14 @@ function App() {
 					</div>
 				</div>
 			</FluentThemeProvider>
+			<input
+				ref={fileInputRef}
+				type="file"
+				accept=".csv"
+				className="hidden"
+				onChange={handleFileChange}
+				aria-label="CSV file input"
+			/>
 		</ThemeProvider>
 	);
 }
