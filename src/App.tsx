@@ -1,18 +1,13 @@
 import { Text, Input, Button, Label, Card, CardHeader, Tooltip } from "@fluentui/react-components";
 import { DatePicker } from "@fluentui/react-datepicker-compat";
-import {
-	AddRegular,
-	DeleteFilled,
-	DocumentArrowUpRegular,
-	ArrowDownloadFilled,
-} from "@fluentui/react-icons";
+import { DeleteFilled, ArrowDownloadFilled } from "@fluentui/react-icons";
 import type { IEntry } from "./types/IEntry";
 import type { IFileImportResult } from "./types/IFileImportResult";
 import React from "react";
 import { calculateHandicap } from "./lib/util";
 import { FluentThemeProvider } from "./providers/FluentThemeProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
-import { ModeToggle } from "./components/ModeToggle";
+import { Header } from "./components/Header";
 import { ImportResultMessageBar } from "./components/ImportResultMessageBar";
 import { mockScores } from "./mockData/mockScores";
 import { COLUMN_HEADERS } from "./lib/constants";
@@ -101,32 +96,13 @@ function App() {
 		<ThemeProvider defaultTheme="light" storageKey="theme">
 			<FluentThemeProvider>
 				<div className="flex flex-col h-full w-full m-0 bg-app-background">
-					{/* Header */}
-					<div className="flex flex-row sm:flex-wrap flex-nowrap justify-between items-center bg-primary text-primary-foreground min-h-[50px] w-full box-border p-3">
-						<Text className="text-base sm:text-xl font-semibold">Golf Handicap Calculator</Text>
-						<div className="flex gap-3">
-							<Button
-								onClick={triggerFilePicker}
-								appearance="secondary"
-								className="bg-slate-600 text-secondary-text items-center text-base sm:text-lg min-w-[125px] sm:min-w-[150px]"
-								icon={<DocumentArrowUpRegular />}
-							>
-								Import CSV
-							</Button>
-							<Button
-								onClick={() => {
-									newEntry();
-									setHandicapVisible(false);
-								}}
-								appearance="secondary"
-								className="items-center text-base sm:text-lg min-w-[125px] sm:min-w-[150px]"
-								icon={<AddRegular />}
-							>
-								Add Entry
-							</Button>
-							<ModeToggle />
-						</div>
-					</div>
+					<Header
+						onImport={triggerFilePicker}
+						onAddEntry={() => {
+							newEntry();
+							setHandicapVisible(false);
+						}}
+					/>
 					<div>
 						<p className="text-lg text-app-foreground font-semibold p-2">
 							To get started, add at least three entries, then click "Calculate Handicap".
