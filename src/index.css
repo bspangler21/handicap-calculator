@@ -14,22 +14,20 @@
 
   --primary: #4E705C;
   --primary-foreground: #ffffff;
-  --secondary-button: #45556c;
-  --secondary-text: #ffffff;
+  --app-foreground: #242424;
+  --app-background: #ffffff;
+}
+
+.dark {
+  --app-foreground: #f5f5f5;
+  --app-background: #1c1c1c;
 }
 
 @theme inline {
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-app-foreground: var(--colorNeutralForeground1);
-  --color-app-background: var(--colorNeutralBackground1);
-  --color-secondary-button: var(--secondary-button);
-  --color-secondary-text: var(--secondary-text);
-}
-
-.dark {
-  --secondary-button: #bbcae0;
-  --secondary-text: #45556c;
+  --color-app-foreground: var(--app-foreground);
+  --color-app-background: var(--app-background);
 }
 
 #root {
