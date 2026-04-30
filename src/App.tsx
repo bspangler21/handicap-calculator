@@ -1,11 +1,14 @@
 import React from "react";
 import { ModeToggle } from "@/components/mode-toggle";
-import { calculateHandicap } from "@/lib/util";
+import { calculateHandicap } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme-provider";
 import type { IEntry } from "@/types/IEntry";
 import versionData from "@/version.json";
 import { Plus, Trash2 } from "lucide-react";
+import { mockScores } from "./mockData/mockScores";
+import { COLUMN_HEADERS } from "@/lib/constants";
 
+const mockEntries: IEntry[] = mockScores;
 const VERSION = `v1.0.${versionData.version}`;
 
 const EMPTY_ENTRY = (): IEntry => ({
@@ -17,25 +20,33 @@ const EMPTY_ENTRY = (): IEntry => ({
 	score: 0,
 });
 
+const createInitialEntries = (): IEntry[] =>
+	window.location.hostname === "localhost"
+		? [...mockEntries]
+		: [EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()];
+
 function formatDateForInput(date: Date): string {
 	return date.toISOString().slice(0, 10);
 }
 
 function parseDateInputValue(value: string): Date {
+	if (!value) return new Date();
 	const [year, month, day] = value.split("-").map(Number);
 	return new Date(year, month - 1, day);
 }
 
 export function App() {
-	const [entries, setEntries] = React.useState<IEntry[]>([
-		EMPTY_ENTRY(),
-		EMPTY_ENTRY(),
-		EMPTY_ENTRY(),
-	]);
+	const createInitialEntries = (): IEntry[] =>
+		window.location.hostname === "localhost"
+			? [...mockEntries]
+			: [EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()];
+	const [entries, setEntries] = React.useState<IEntry[]>(
+		createInitialEntries()
+	);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
 
-	const columnHeaders = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
+	const columnHeaders = COLUMN_HEADERS;
 
 	const getEligibleEntries = (): IEntry[] =>
 		entries.filter((e) => e.score > 0 && e.courseRating > 0 && e.slopeRating > 0);

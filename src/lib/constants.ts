@@ -1,0 +1,1 @@
+export const COLUMN_HEADERS = ["Date", "Course Name", "Course Rating", "Slope Rating", "Score"];
