@@ -72,11 +72,11 @@ export function App() {
 								newEntry();
 								setHandicapVisible(false);
 							}}
-							className="inline-flex min-w-31.25 items-center gap-2 rounded border border-black/10 bg-white px-4 py-2 text-base text-slate-900 shadow-sm transition hover:bg-slate-50 active:translate-y-px sm:min-w-37.5 sm:text-lg"
+							className="inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-lg"
 							aria-label="Add Entry"
 						>
 							<Plus className="h-4 w-4" />
-							Add Entry
+							<span className="hidden sm:inline">Add Entry</span>
 						</button>
 						<ModeToggle />
 					</div>
@@ -113,7 +113,7 @@ export function App() {
 						{entries.map((entry) => (
 							<div
 								key={entry.id}
-								className="mb-2 flex w-full flex-col gap-2 rounded-md bg-white p-1 shadow-[0_1px_3px_rgba(0,0,0,0.12)] sm:mb-5 sm:flex-row sm:items-stretch sm:gap-10"
+								className="mb-2 flex w-full flex-col gap-2 rounded-md bg-surface p-1 shadow-[0_1px_3px_rgba(0,0,0,0.12)] sm:mb-5 sm:flex-row sm:items-stretch sm:gap-10"
 							>
 								<div className="flex justify-end px-1 pt-1 sm:hidden">
 									<button
@@ -145,7 +145,7 @@ export function App() {
 										onChange={(e) =>
 											updateEntry(entry.id, "date", parseDateInputValue(e.target.value))
 										}
-										className="w-full rounded border px-2 py-1"
+										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
 									/>
 								</div>
 
@@ -155,7 +155,7 @@ export function App() {
 										type="text"
 										value={entry.courseName}
 										onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-										className="w-full rounded border px-2 py-1"
+										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
 									/>
 								</div>
 
@@ -190,7 +190,7 @@ export function App() {
 												return next;
 											});
 										}}
-										className="w-full rounded border px-2 py-1"
+										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
 									/>
 								</div>
 
@@ -203,7 +203,7 @@ export function App() {
 											updateEntry(entry.id, "slopeRating", Number(e.target.value));
 											setHandicapVisible(false);
 										}}
-										className="w-full rounded border px-2 py-1"
+										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
 									/>
 								</div>
 
@@ -216,7 +216,7 @@ export function App() {
 											updateEntry(entry.id, "score", Number(e.target.value));
 											setHandicapVisible(false);
 										}}
-										className="w-full rounded border px-2 py-1"
+										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
 									/>
 								</div>
 							</div>
