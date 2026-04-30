@@ -22,6 +22,7 @@
   --input-border: #d4d4d8;
   --input-text: #18181b;
   --button-bg: #ffffff;
+  --alternate-button-bg: #d4d4d8;
   --button-text: #18181b;
   --button-border: rgba(0, 0, 0, 0.1);
 }
@@ -35,6 +36,7 @@
   --input-border: #52525b;
   --input-text: #f4f4f5;
   --button-bg: #3f3f46;
+  --alternate-button-bg: #87878a;
   --button-text: #f4f4f5;
   --button-border: rgba(255, 255, 255, 0.15);
 }

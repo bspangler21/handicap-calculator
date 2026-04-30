@@ -14,6 +14,12 @@ import { mockScores } from "./mockData/mockScores";
 const mockEntries: IEntry[] = mockScores;
 const VERSION = `v1.0.${versionData.version}`;
 
+const tailwindStyles = {
+	primaryButton:
+		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base",
+	alternateButton: [...primaryButton]
+};
+
 const EMPTY_ENTRY = (): IEntry => ({
 	id: crypto.randomUUID(),
 	date: new Date(),
@@ -102,7 +108,7 @@ export function App() {
 						<button
 							type="button"
 							onClick={triggerFilePicker}
-							className="inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:px-4 sm:text-base"
+							className={tailwindStyles.primaryButton}
 							aria-label="Import CSV"
 						>
 							<Upload className="h-4 w-4" />
@@ -114,7 +120,7 @@ export function App() {
 								newEntry();
 								setHandicapVisible(false);
 							}}
-							className="inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base"
+							className={tailwindStyles.primaryButton}
 							aria-label="Add Entry"
 						>
 							<Plus className="h-4 w-4" />
