@@ -1,12 +1,15 @@
 import React from "react";
 import { ModeToggle } from "@/components/mode-toggle";
+import { ImportResultMessageBar } from "@/components/ImportResultMessageBar";
 import { calculateHandicap } from "@/lib/utils";
+import { COLUMN_HEADERS } from "@/lib/constants";
+import { useFileImport } from "@/hooks/useFileImport";
 import { ThemeProvider } from "@/providers/theme-provider";
 import type { IEntry } from "@/types/IEntry";
+import type { IFileImportResult } from "@/types/IFileImportResult";
 import versionData from "@/version.json";
-import { Plus, Trash2 } from "lucide-react";
+import { Download, Plus, Trash2, Upload } from "lucide-react";
 import { mockScores } from "./mockData/mockScores";
-import { COLUMN_HEADERS } from "@/lib/constants";
 
 const mockEntries: IEntry[] = mockScores;
 const VERSION = `v1.0.${versionData.version}`;
@@ -36,15 +39,34 @@ function parseDateInputValue(value: string): Date {
 }
 
 export function App() {
-	const createInitialEntries = (): IEntry[] =>
-		window.location.hostname === "localhost"
-			? [...mockEntries]
-			: [EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()];
-	const [entries, setEntries] = React.useState<IEntry[]>(
-		createInitialEntries()
-	);
+	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
+	const [importResult, setImportResult] = React.useState<IFileImportResult | null>(null);
+
+	const handleImport = React.useCallback((result: IFileImportResult) => {
+		setImportResult(result);
+		if (result.imported.length > 0) {
+			setEntries(result.imported);
+			setHandicapVisible(false);
+		}
+	}, []);
+
+	const { fileInputRef, triggerFilePicker, handleFileChange } = useFileImport(handleImport);
+
+	const exportData = () => {
+		let csvContent = `${COLUMN_HEADERS.join(",")}\n`;
+		for (const entry of entries) {
+			csvContent += `${entry.date.toLocaleDateString()},${entry.courseName.replaceAll(",", "")},${entry.courseRating},${entry.slopeRating},${entry.score}\n`;
+		}
+		const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = "golf-handicap-calculator-scores.csv";
+		link.click();
+		URL.revokeObjectURL(url);
+	};
 
 	const columnHeaders = COLUMN_HEADERS;
 
@@ -76,14 +98,23 @@ export function App() {
 			<div className="flex min-h-screen w-full flex-col bg-app-background text-app-foreground">
 				<header className="flex min-h-12.5 w-full items-center justify-between bg-primary px-3 text-primary-foreground">
 					<h1 className="text-base font-semibold sm:text-xl">Golf Handicap Calculator</h1>
-					<div className="flex items-center gap-3">
+					<div className="flex items-center gap-2">
+						<button
+							type="button"
+							onClick={triggerFilePicker}
+							className="inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:px-4 sm:text-base"
+							aria-label="Import CSV"
+						>
+							<Upload className="h-4 w-4" />
+							<span className="hidden sm:inline">Import CSV</span>
+						</button>
 						<button
 							type="button"
 							onClick={() => {
 								newEntry();
 								setHandicapVisible(false);
 							}}
-							className="inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-lg"
+							className="inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base"
 							aria-label="Add Entry"
 						>
 							<Plus className="h-4 w-4" />
@@ -92,6 +123,14 @@ export function App() {
 						<ModeToggle />
 					</div>
 				</header>
+
+				{importResult && (
+					<ImportResultMessageBar
+						importedCount={importResult.imported.length}
+						skipped={importResult.skipped}
+						onDismiss={() => setImportResult(null)}
+					/>
+				)}
 
 				<main className="flex flex-1 flex-col overflow-y-auto px-2 py-2">
 					<section className="mb-5 px-2">
@@ -246,9 +285,20 @@ export function App() {
 						</div>
 
 						{handicapVisible ? (
-							<p className="px-2 py-3 text-lg font-semibold text-app-foreground">
-								Your Handicap: {calculateHandicap(getEligibleEntries())}
-							</p>
+							<div className="px-2 py-3">
+								<p className="text-lg font-semibold text-app-foreground">
+									Your Handicap: {calculateHandicap(getEligibleEntries())}
+								</p>
+								<button
+									type="button"
+									onClick={exportData}
+									title="Download your scores so they can be re-imported to the tool at a later date."
+									className="mt-3 inline-flex items-center gap-2 rounded bg-primary px-4 py-2 text-sm text-primary-foreground transition hover:opacity-90 active:translate-y-px"
+								>
+									<Download className="h-4 w-4" />
+									Export Data
+								</button>
+							</div>
 						) : null}
 					</section>
 				</main>
@@ -257,6 +307,14 @@ export function App() {
 					<p className="ml-auto pr-2 text-base leading-none text-primary-foreground">{VERSION}</p>
 				</footer>
 			</div>
+			<input
+				ref={fileInputRef}
+				type="file"
+				accept=".csv"
+				className="hidden"
+				onChange={handleFileChange}
+				aria-label="CSV file input"
+			/>
 		</ThemeProvider>
 	);
 }
