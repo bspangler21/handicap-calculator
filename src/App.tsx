@@ -16,8 +16,7 @@ const VERSION = `v1.0.${versionData.version}`;
 
 const tailwindStyles = {
 	primaryButton:
-		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base",
-	alternateButton: [...primaryButton]
+		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base"
 };
 
 const EMPTY_ENTRY = (): IEntry => ({
