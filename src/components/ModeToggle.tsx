@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ChevronDown, MoonStar, SunMedium } from "lucide-react";
+import { ChevronDown, MoonStar, SunMedium, LaptopMinimal } from "lucide-react";
 import { useTheme } from "../hooks/use-theme";
 
 const themeOptions = [
 	{ value: "light" as const, label: "Light", icon: SunMedium },
 	{ value: "dark" as const, label: "Dark", icon: MoonStar },
-	{ value: "system" as const, label: "System", icon: ChevronDown },
+	{ value: "system" as const, label: "System", icon: LaptopMinimal },
 ];
 
 export function ModeToggle() {

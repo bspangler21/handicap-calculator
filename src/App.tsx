@@ -1,5 +1,5 @@
 import React from "react";
-import { ModeToggle } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/ModeToggle";
 import { ImportResultMessageBar } from "@/components/ImportResultMessageBar";
 import { calculateHandicap } from "@/lib/utils";
 import { COLUMN_HEADERS } from "@/lib/constants";
@@ -16,7 +16,9 @@ const VERSION = `v1.0.${versionData.version}`;
 
 const tailwindStyles = {
 	primaryButton:
-		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base"
+		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base",
+	inputContainer: "flex flex-col min-w-0 flex-1 p-1",
+	inputLabel: "mb-1 text-sm font-semibold sm:hidden"
 };
 
 const EMPTY_ENTRY = (): IEntry => ({
@@ -192,8 +194,8 @@ export function App() {
 									</button>
 								</div>
 
-								<div className="flex flex-col min-w-0 flex-1 p-1">
-									<label className="mb-1 text-sm font-semibold sm:hidden">Date</label>
+								<div className={tailwindStyles.inputContainer}>
+									<label className={tailwindStyles.inputLabel}>Date</label>
 									<input
 										type="date"
 										value={formatDateForInput(entry.date)}
@@ -204,8 +206,8 @@ export function App() {
 									/>
 								</div>
 
-								<div className="flex flex-col min-w-0 flex-1 p-1">
-									<label className="mb-1 text-sm font-semibold sm:hidden">Course Name</label>
+								<div className={tailwindStyles.inputContainer}>
+									<label className={tailwindStyles.inputLabel}>Course Name</label>
 									<input
 										type="text"
 										value={entry.courseName}
@@ -214,8 +216,8 @@ export function App() {
 									/>
 								</div>
 
-								<div className="flex flex-col min-w-0 flex-1 p-1">
-									<label className="mb-1 text-sm font-semibold sm:hidden">Course Rating</label>
+								<div className={tailwindStyles.inputContainer}>
+									<label className={tailwindStyles.inputLabel}>Course Rating</label>
 									<input
 										type="number"
 										step="0.1"
@@ -249,8 +251,8 @@ export function App() {
 									/>
 								</div>
 
-								<div className="flex flex-col min-w-0 flex-1 p-1">
-									<label className="mb-1 text-sm font-semibold sm:hidden">Slope Rating</label>
+								<div className={tailwindStyles.inputContainer}>
+									<label className={tailwindStyles.inputLabel}>Slope Rating</label>
 									<input
 										type="number"
 										value={entry.slopeRating.toString()}
@@ -262,8 +264,8 @@ export function App() {
 									/>
 								</div>
 
-								<div className="flex flex-col min-w-0 flex-1 p-1">
-									<label className="mb-1 text-sm font-semibold sm:hidden">Score</label>
+								<div className={tailwindStyles.inputContainer}>
+									<label className={tailwindStyles.inputLabel}>Score</label>
 									<input
 										type="number"
 										value={entry.score.toString()}

@@ -13,7 +13,7 @@ Fluent UI is the **single source of truth** for all colors. Tailwind is used onl
 | `src/providers/theme-provider.tsx` | Stores `"light" \| "dark" \| "system"` in state, persists to `localStorage`, exposes `setTheme` via context |
 | `src/hooks/use-theme.ts` | Thin hook to consume `ThemeProviderContext` |
 | `src/providers/fluent-theme-provider.tsx` | Reads theme context; renders `<FluentProvider>` with the matching custom theme; owns the `theMasters` brand palette and both theme objects |
-| `src/components/mode-toggle.tsx` | Fluent `Menu` button that calls `setTheme("light" \| "dark" \| "system")` |
+| `src/components/ModeToggle.tsx` | Fluent `Menu` button that calls `setTheme("light" \| "dark" \| "system")` |
 | `src/index.css` | Defines static brand CSS variables and bridges Fluent tokens into Tailwind via `@theme inline` |
 
 ## How It Works
