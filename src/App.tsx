@@ -16,9 +16,9 @@ const VERSION = `v1.0.${versionData.version}`;
 
 const tailwindStyles = {
 	primaryButton:
-		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base",
+		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base h-10",
 	inputContainer: "flex flex-col min-w-0 flex-1 p-1",
-	inputLabel: "mb-1 text-sm font-semibold sm:hidden"
+	inputLabel: "mb-1 text-sm font-semibold sm:hidden",
 };
 
 const EMPTY_ENTRY = (): IEntry => ({
@@ -102,7 +102,7 @@ export function App() {
 
 	return (
 		<ThemeProvider defaultTheme="light" storageKey="theme">
-			<div className="flex min-h-screen w-full flex-col bg-app-background text-app-foreground">
+			<div className="inline-flex min-h-screen w-full flex-col bg-app-background text-app-foreground">
 				<header className="flex min-h-12.5 w-full items-center justify-between bg-primary px-3 text-primary-foreground">
 					<h1 className="text-base font-semibold sm:text-xl">Golf Handicap Calculator</h1>
 					<div className="flex items-center gap-2">
