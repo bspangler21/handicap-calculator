@@ -16,15 +16,6 @@ import { EntryRow } from "@/components/EntryRow";
 const mockEntries: IEntry[] = mockScores;
 const VERSION = `v1.0.${versionData.version}`;
 
-const tailwindStyles = {
-	primaryButton:
-		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base h-10",
-	alternateButton:
-		"inline-flex items-center gap-2 rounded border border-button-border bg-alternate-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base h-10",
-	inputContainer: "flex flex-col min-w-0 flex-1 p-1",
-	inputLabel: "mb-1 text-sm font-semibold sm:hidden",
-};
-
 const EMPTY_ENTRY = (): IEntry => ({
 	id: crypto.randomUUID(),
 	date: new Date(),
@@ -100,37 +91,27 @@ export function App() {
 				<header className="flex min-h-12.5 w-full items-center justify-between bg-primary px-3 text-primary-foreground">
 					<h1 className="text-base font-semibold sm:text-xl">Golf Handicap Calculator</h1>
 					<div className="flex items-center gap-2">
-						{/* <Button
-							variant="secondary"
-							size="lg"
-							aria-label="Import CSV"
-							onClick={triggerFilePicker}
-							className="hidden sm:flex"
-						>
-							<Upload />
-							Import CSV
-						</Button> */}
 						<Button
 							variant="secondary"
 							size="icon"
 							aria-label="Import CSV"
 							onClick={triggerFilePicker}
-							className="sm:w-auto sm:px-2.5 sm:gap-1.5"
+							className="sm:w-auto sm:min-w-35 sm:px-2.5 sm:gap-1.5"
 						>
-							<Upload /><span className="hidden sm:inline">Import CSV</span>
+							<Upload />
+							<span className="hidden sm:inline">Import CSV</span>
 						</Button>
-						<button
-							type="button"
+						<Button
+							size="icon"
 							onClick={() => {
 								newEntry();
 								setHandicapVisible(false);
 							}}
-							className={tailwindStyles.primaryButton}
-							aria-label="Add Entry"
+							className="sm:w-auto sm:min-w-35 sm:px-2.5 sm:gap-1.5 bg-button-bg"
 						>
-							<Plus className="h-4 w-4" />
+							<Plus />
 							<span className="hidden sm:inline">Add Entry</span>
-						</button>
+						</Button>
 						<ModeToggle />
 					</div>
 				</header>

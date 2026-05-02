@@ -60,7 +60,7 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 
 			<div className={inputContainer}>
 				<label className={inputLabel}>Date</label>
-				<InputGroup>
+				<InputGroup className="bg-input-bg!">
 					<InputGroupInput
 						value={dateInput}
 						placeholder="June 01, 2025"
@@ -94,6 +94,7 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 								sideOffset={10}
 							>
 								<Calendar
+									className="text-input-text"
 									mode="single"
 									selected={entry.date}
 									month={month}

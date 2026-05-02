@@ -22,7 +22,7 @@ export function ModeToggle() {
 				aria-haspopup="menu"
 				aria-expanded={open}
 				onClick={() => setOpen((current) => !current)}
-				className="inline-flex items-center gap-2 rounded px-3 py-2 text-primary-foreground border border-primary-foreground/30 h-10 min-w-30 justify-center"
+				className="inline-flex items-center gap-2 rounded px-3 py-2 text-primary-foreground border border-primary-foreground/30 h-10 sm:w-auto sm:min-w-35 justify-center"
 			>
 				<ActiveIcon className="h-4 w-4" />
 				<span className="hidden sm:inline text-sm">{activeOption.label}</span>
