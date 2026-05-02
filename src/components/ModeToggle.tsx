@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown, MoonStar, SunMedium, LaptopMinimal } from "lucide-react";
 import { useTheme } from "../hooks/use-theme";
+import { Button } from "./ui/button";
 
 const themeOptions = [
 	{ value: "light" as const, label: "Light", icon: SunMedium },
@@ -16,18 +17,19 @@ export function ModeToggle() {
 
 	return (
 		<div className="relative">
-			<button
+			<Button
 				type="button"
 				aria-label="Toggle theme"
 				aria-haspopup="menu"
 				aria-expanded={open}
 				onClick={() => setOpen((current) => !current)}
-				className="inline-flex items-center gap-2 rounded px-3 py-2 text-primary-foreground border border-primary-foreground/30 h-10 sm:w-auto sm:min-w-35 justify-center"
+				variant="secondary"
+				className="inline-flex items-center gap-2 rounded-lg px-3 py-2 border border-primary-foreground/30 h-10 sm:w-auto sm:min-w-35 justify-center text-input-text"
 			>
 				<ActiveIcon className="h-4 w-4" />
 				<span className="hidden sm:inline text-sm">{activeOption.label}</span>
 				<ChevronDown className="h-4 w-4" />
-			</button>
+			</Button>
 			{open ? (
 				<div className="absolute right-0 z-10 mt-2 w-32 overflow-hidden rounded border bg-app-background text-app-foreground shadow-lg">
 					{themeOptions.map((option) => {

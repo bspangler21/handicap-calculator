@@ -96,7 +96,7 @@ export function App() {
 							size="icon"
 							aria-label="Import CSV"
 							onClick={triggerFilePicker}
-							className="sm:w-auto sm:min-w-35 sm:px-2.5 sm:gap-1.5"
+							className="sm:w-auto sm:min-w-35 h-10 sm:px-2.5 sm:gap-1.5"
 						>
 							<Upload />
 							<span className="hidden sm:inline">Import CSV</span>
@@ -107,7 +107,7 @@ export function App() {
 								newEntry();
 								setHandicapVisible(false);
 							}}
-							className="sm:w-auto sm:min-w-35 sm:px-2.5 sm:gap-1.5 bg-button-bg"
+							className="sm:w-auto sm:min-w-35 h-10 sm:px-2.5 sm:gap-1.5 bg-button-bg text-input-text"
 						>
 							<Plus />
 							<span className="hidden sm:inline">Add Entry</span>
