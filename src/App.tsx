@@ -1,14 +1,7 @@
 import React from "react";
 import { ModeToggle } from "@/components/ModeToggle";
 import { ImportResultMessageBar } from "@/components/ImportResultMessageBar";
-import {
-	Popover,
-	PopoverContent,
-	PopoverDescription,
-	PopoverHeader,
-	PopoverTitle,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { calculateHandicap } from "@/lib/utils";
 import { COLUMN_HEADERS } from "@/lib/constants";
 import { useFileImport } from "@/hooks/useFileImport";
@@ -16,8 +9,9 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import type { IEntry } from "@/types/IEntry";
 import type { IFileImportResult } from "@/types/IFileImportResult";
 import versionData from "@/version.json";
-import { Download, Plus, Trash2, Upload } from "lucide-react";
+import { Download, Plus, Upload } from "lucide-react";
 import { mockScores } from "./mockData/mockScores";
+import { EntryRow } from "@/components/EntryRow";
 
 const mockEntries: IEntry[] = mockScores;
 const VERSION = `v1.0.${versionData.version}`;
@@ -25,6 +19,8 @@ const VERSION = `v1.0.${versionData.version}`;
 const tailwindStyles = {
 	primaryButton:
 		"inline-flex items-center gap-2 rounded border border-button-border bg-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base h-10",
+	alternateButton:
+		"inline-flex items-center gap-2 rounded border border-button-border bg-alternate-button-bg px-3 py-2 text-sm text-button-text shadow-sm transition hover:opacity-90 active:translate-y-px sm:min-w-37.5 sm:px-4 sm:text-base h-10",
 	inputContainer: "flex flex-col min-w-0 flex-1 p-1",
 	inputLabel: "mb-1 text-sm font-semibold sm:hidden",
 };
@@ -42,16 +38,6 @@ const createInitialEntries = (): IEntry[] =>
 	window.location.hostname === "localhost"
 		? [...mockEntries]
 		: [EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()];
-
-function formatDateForInput(date: Date): string {
-	return date.toISOString().slice(0, 10);
-}
-
-function parseDateInputValue(value: string): Date {
-	if (!value) return new Date();
-	const [year, month, day] = value.split("-").map(Number);
-	return new Date(year, month - 1, day);
-}
 
 export function App() {
 	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries);
@@ -114,15 +100,25 @@ export function App() {
 				<header className="flex min-h-12.5 w-full items-center justify-between bg-primary px-3 text-primary-foreground">
 					<h1 className="text-base font-semibold sm:text-xl">Golf Handicap Calculator</h1>
 					<div className="flex items-center gap-2">
-						<button
-							type="button"
-							onClick={triggerFilePicker}
-							className={tailwindStyles.primaryButton}
+						{/* <Button
+							variant="secondary"
+							size="lg"
 							aria-label="Import CSV"
+							onClick={triggerFilePicker}
+							className="hidden sm:flex"
 						>
-							<Upload className="h-4 w-4" />
-							<span className="hidden sm:inline">Import CSV</span>
-						</button>
+							<Upload />
+							Import CSV
+						</Button> */}
+						<Button
+							variant="secondary"
+							size="icon"
+							aria-label="Import CSV"
+							onClick={triggerFilePicker}
+							className="sm:w-auto sm:px-2.5 sm:gap-1.5"
+						>
+							<Upload /><span className="hidden sm:inline">Import CSV</span>
+						</Button>
 						<button
 							type="button"
 							onClick={() => {
@@ -176,115 +172,13 @@ export function App() {
 						</div>
 
 						{entries.map((entry) => (
-							<div
+							<EntryRow
 								key={entry.id}
-								className="mb-2 flex w-full flex-col gap-2 rounded-md bg-surface p-1 shadow-[0_1px_3px_rgba(0,0,0,0.12)] sm:mb-5 sm:flex-row sm:items-stretch sm:gap-10"
-							>
-								<div className="flex justify-end px-1 pt-1 sm:hidden">
-									<button
-										type="button"
-										onClick={() => removeEntry(entry.id)}
-										className="flex h-8 w-8 items-center justify-center rounded text-red-600"
-										aria-label={`Delete entry ${entry.courseName || ""}`.trim()}
-									>
-										<Trash2 className="h-5 w-5" />
-									</button>
-								</div>
-
-								<div className="hidden w-10 min-w-10 items-center sm:flex">
-									<button
-										type="button"
-										onClick={() => removeEntry(entry.id)}
-										className="flex h-8 w-8 items-center justify-center rounded text-red-600"
-										aria-label={`Delete entry ${entry.courseName || ""}`.trim()}
-									>
-										<Trash2 className="h-5 w-5" />
-									</button>
-								</div>
-
-								<div className={tailwindStyles.inputContainer}>
-									<label className={tailwindStyles.inputLabel}>Date</label>
-									<input
-										type="date"
-										value={formatDateForInput(entry.date)}
-										onChange={(e) =>
-											updateEntry(entry.id, "date", parseDateInputValue(e.target.value))
-										}
-										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
-									/>
-								</div>
-
-								<div className={tailwindStyles.inputContainer}>
-									<label className={tailwindStyles.inputLabel}>Course Name</label>
-									<input
-										type="text"
-										value={entry.courseName}
-										onChange={(e) => updateEntry(entry.id, "courseName", e.target.value)}
-										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
-									/>
-								</div>
-
-								<div className={tailwindStyles.inputContainer}>
-									<label className={tailwindStyles.inputLabel}>Course Rating</label>
-									<input
-										type="number"
-										step="0.1"
-										value={courseRatingInput[entry.id] ?? entry.courseRating.toString()}
-										onChange={(e) => {
-											setCourseRatingInput((prev) => ({ ...prev, [entry.id]: e.target.value }));
-											setHandicapVisible(false);
-										}}
-										onBlur={() => {
-											const raw = courseRatingInput[entry.id];
-											if (raw === undefined || raw.trim() === "") {
-												setCourseRatingInput((prev) => {
-													const next = { ...prev };
-													delete next[entry.id];
-													return next;
-												});
-												return;
-											}
-
-											const parsed = Number(raw);
-											if (!Number.isNaN(parsed)) {
-												updateEntry(entry.id, "courseRating", parsed);
-											}
-											setCourseRatingInput((prev) => {
-												const next = { ...prev };
-												delete next[entry.id];
-												return next;
-											});
-										}}
-										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
-									/>
-								</div>
-
-								<div className={tailwindStyles.inputContainer}>
-									<label className={tailwindStyles.inputLabel}>Slope Rating</label>
-									<input
-										type="number"
-										value={entry.slopeRating.toString()}
-										onChange={(e) => {
-											updateEntry(entry.id, "slopeRating", Number(e.target.value));
-											setHandicapVisible(false);
-										}}
-										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
-									/>
-								</div>
-
-								<div className={tailwindStyles.inputContainer}>
-									<label className={tailwindStyles.inputLabel}>Score</label>
-									<input
-										type="number"
-										value={entry.score.toString()}
-										onChange={(e) => {
-											updateEntry(entry.id, "score", Number(e.target.value));
-											setHandicapVisible(false);
-										}}
-										className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
-									/>
-								</div>
-							</div>
+								entry={entry}
+								onUpdate={updateEntry}
+								onRemove={removeEntry}
+								onResetHandicap={() => setHandicapVisible(false)}
+							/>
 						))}
 
 						<div className="flex flex-col items-center py-3">
