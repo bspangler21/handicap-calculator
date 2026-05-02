@@ -1,6 +1,14 @@
 import React from "react";
 import { ModeToggle } from "@/components/ModeToggle";
 import { ImportResultMessageBar } from "@/components/ImportResultMessageBar";
+import {
+	Popover,
+	PopoverContent,
+	PopoverDescription,
+	PopoverHeader,
+	PopoverTitle,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { calculateHandicap } from "@/lib/utils";
 import { COLUMN_HEADERS } from "@/lib/constants";
 import { useFileImport } from "@/hooks/useFileImport";
