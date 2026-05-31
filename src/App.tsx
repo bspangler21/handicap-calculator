@@ -33,7 +33,6 @@ const createInitialEntries = (): IEntry[] =>
 export function App() {
 	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
-	const [courseRatingInput, setCourseRatingInput] = React.useState<Record<string, string>>({});
 	const [importResult, setImportResult] = React.useState<IFileImportResult | null>(null);
 
 	const handleImport = React.useCallback((result: IFileImportResult) => {
@@ -77,11 +76,6 @@ export function App() {
 
 	const removeEntry = (id: string) => {
 		setEntries((prev) => prev.filter((entry) => entry.id !== id));
-		setCourseRatingInput((prev) => {
-			const next = { ...prev };
-			delete next[id];
-			return next;
-		});
 		setHandicapVisible(false);
 	};
 
