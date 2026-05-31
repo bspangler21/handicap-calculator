@@ -15,9 +15,11 @@ export default defineConfig({
 			name: "chromium",
 			use: {
 				...devices["Desktop Chrome"],
-				launchOptions: {
-					executablePath: "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
-				},
+				// Use Playwright's managed browser by default. Set PLAYWRIGHT_CHROMIUM_PATH
+				// to override (e.g. a sandbox/CI image with a pre-installed binary).
+				...(process.env.PLAYWRIGHT_CHROMIUM_PATH
+					? { launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } }
+					: {}),
 			},
 		},
 	],

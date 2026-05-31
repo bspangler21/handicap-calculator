@@ -4,67 +4,70 @@ This document describes how light/dark mode works in the handicap calculator app
 
 ## Overview
 
-Fluent UI is the **single source of truth** for all colors. Tailwind is used only for layout and spacing. There is no parallel CSS dark-mode system — no `dark:` variant, no `.dark` class toggled on `<html>`.
+Theming is driven entirely by **semantic CSS custom properties** defined in `src/index.css`. Tailwind v4 bridges those variables into utility classes via `@theme inline`, so markup uses plain class names like `bg-app-background` and `text-input-text` with no `dark:` prefixes. Dark mode is a single `.dark` class toggled on `<html>`; every token is redeclared under `.dark`, so the same utility class resolves to a different value automatically.
+
+Fluent UI is no longer used — it was removed during the Tailwind v4 migration.
 
 ## Files Involved
 
 | File | Role |
 |------|------|
-| `src/providers/theme-provider.tsx` | Stores `"light" \| "dark" \| "system"` in state, persists to `localStorage`, exposes `setTheme` via context |
+| `src/providers/theme-provider.tsx` | Stores `"light" \| "dark" \| "system"` in state, persists to `localStorage` (`storageKey`, default `"app-theme"`), and toggles the `.dark` class on `document.documentElement` |
 | `src/hooks/use-theme.ts` | Thin hook to consume `ThemeProviderContext` |
-| `src/providers/fluent-theme-provider.tsx` | Reads theme context; renders `<FluentProvider>` with the matching custom theme; owns the `theMasters` brand palette and both theme objects |
-| `src/components/ModeToggle.tsx` | Fluent `Menu` button that calls `setTheme("light" \| "dark" \| "system")` |
-| `src/index.css` | Defines static brand CSS variables and bridges Fluent tokens into Tailwind via `@theme inline` |
+| `src/components/ModeToggle.tsx` | Radix `DropdownMenu` (via `src/components/ui/dropdown-menu.tsx`) that calls `setTheme("light" \| "dark" \| "system")` |
+| `src/index.css` | Defines all theme tokens in `:root` and `.dark`, and maps them to Tailwind color names via `@theme inline` |
 
 ## How It Works
 
-When the user toggles the theme, `ThemeProvider` persists the choice to `localStorage`. `FluentThemeProvider` reads that choice and re-renders `<FluentProvider>` with either `lightTheme` or `darkTheme` (both built from the `theMasters` brand palette). Fluent then injects its CSS custom properties — `--colorNeutralForeground1`, `--colorNeutralBackground1`, etc. — onto the provider element.
+When the user picks a theme, `ThemeProvider` persists the choice to `localStorage` and a `useEffect` adds or removes the `.dark` class on `<html>`:
 
-`index.css` maps two of those tokens into Tailwind color names:
+- `"light"` → removes `.dark`
+- `"dark"` → adds `.dark`
+- `"system"` → follows `prefers-color-scheme` and subscribes to changes
+
+`index.css` declares each semantic token twice — once in `:root` (light) and once in `.dark` — then maps them into Tailwind color names in the `@theme inline` block:
 
 ```css
 @theme inline {
-  --color-app-foreground: var(--colorNeutralForeground1);
-  --color-app-background: var(--colorNeutralBackground1);
+  --color-app-foreground: var(--app-foreground);
+  --color-app-background: var(--app-background);
+  --color-input-bg: var(--input-bg);
+  /* ...etc */
 }
 ```
 
-This means `text-app-foreground` and `bg-app-background` are ordinary Tailwind classes whose resolved values are controlled entirely by whichever Fluent theme is active.
+This makes `text-app-foreground`, `bg-app-background`, `bg-input-bg`, and friends ordinary Tailwind classes whose resolved values flip with the `.dark` class. The `@custom-variant dark (&:is(.dark, .dark *))` line wires Tailwind's `dark:` variant to the same `.dark` class for the rare cases markup needs it (e.g. `dark:hover:bg-white/10`).
 
 ## Data Flow
 
 ```
-User clicks ModeToggle
+User selects a theme in ModeToggle
   → setTheme("dark")
   → localStorage.setItem("app-theme", "dark")
-  → FluentThemeProvider re-renders with darkTheme
-      → Fluent injects --colorNeutralForeground1, --colorNeutralBackground1, etc.
-          → text-app-foreground and bg-app-background update automatically
-          → All Fluent components (Input, Button, DatePicker, etc.) update automatically
+  → ThemeProvider effect adds `.dark` to <html>
+      → every --token under .dark takes effect
+          → bg-app-background, text-input-text, bg-surface, etc. update automatically
 ```
 
 ## Color Classes in Use
 
-| Class | Resolves To | Used For |
-|-------|-------------|----------|
-| `bg-app-background` | `var(--colorNeutralBackground1)` | Page background |
-| `text-app-foreground` | `var(--colorNeutralForeground1)` | Body text, labels, icons |
-| `bg-primary` | `#4E705C` (static) | Header and footer background |
-| `text-primary-foreground` | `#ffffff` (static) | Text on header/footer |
+| Class | Resolves To (token) | Used For |
+|-------|---------------------|----------|
+| `bg-app-background` | `var(--app-background)` | Page background |
+| `text-app-foreground` | `var(--app-foreground)` | Body text, labels, icons |
+| `bg-surface` | `var(--surface)` | Entry row cards |
+| `bg-input-bg` / `text-input-text` / `border-input-border` | input tokens | Form fields |
+| `bg-button-bg` / `text-button-text` | button tokens | Buttons |
+| `bg-primary` / `text-primary-foreground` | brand green `#4E705C` / white | Header and footer |
 
-`--primary` and `--primary-foreground` are static CSS variables — the brand green does not change between light and dark modes.
-
-## The `theMasters` Brand Palette
-
-The custom "The Masters" green brand ramp lives in `src/providers/fluent-theme-provider.tsx`. It drives both `lightTheme` and `darkTheme` via Fluent's `createLightTheme` / `createDarkTheme` helpers, so Fluent components use the brand green for focus rings, primary buttons, etc. The dark theme gets two foreground overrides so brand text remains readable on dark backgrounds:
-
-```ts
-darkTheme.colorBrandForeground1 = theMasters[110];
-darkTheme.colorBrandForeground2 = theMasters[120];
-```
+`--primary` and `--primary-foreground` are declared in both `:root` and `.dark` with the same value — the brand green does not change between modes.
 
 ## Adding New Color Needs
 
-For a color that should adapt to light/dark: find the appropriate Fluent token (`--colorNeutral*`, `--colorBrand*`, etc.) and either use it as an arbitrary Tailwind value (`text-[var(--colorNeutralForeground2)]`) or add a named mapping to the `@theme inline` block in `index.css`.
+For a color that should adapt to light/dark:
 
-For a static brand color: add a CSS variable to `:root` in `index.css` and map it in `@theme inline`.
+1. Add the token to **both** `:root` and `.dark` in `index.css` (e.g. `--my-token`).
+2. Map it in the `@theme inline` block: `--color-my-token: var(--my-token);`.
+3. Use it as a normal Tailwind class: `bg-my-token`.
+
+Skipping step 1 (declaring it only in `:root`) means the color won't change in dark mode. Skipping step 2 means the class won't exist as a Tailwind utility — see the project note on Tailwind v4 CSS-variable bridging.

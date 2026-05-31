@@ -3,8 +3,11 @@ import { twMerge } from "tailwind-merge"
 import type { IEntry } from "../types/IEntry";
 
 export function calculateHandicap(scores: IEntry[]) {
-  let topScores = scores.sort((a, b) => a.date.getTime() - b.date.getTime()).slice(0, 6) ?? [];
-  console.log("topScores", topScores);
+  // Take the 6 most recent rounds. Clone first — sort mutates in place, and we
+  // must not reorder the caller's array.
+  let topScores = [...scores]
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .slice(0, 6);
   // Remove the lowest score
   topScores = topScores.sort((a, b) => a.score - b.score).slice(0, -1);
   // Remove the highest score
@@ -17,7 +20,6 @@ export function calculateHandicap(scores: IEntry[]) {
   );
 
   const handicap = differentials.reduce((sum, d) => sum + d, 0) / differentials.length;
-  console.log("scores", scores, Math.round(handicap * 10) / 10);
   return Math.round(handicap * 10) / 10; // Round to 1 decimal place
 }
 

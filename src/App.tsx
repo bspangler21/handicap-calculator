@@ -48,7 +48,8 @@ export function App() {
 	const exportData = () => {
 		let csvContent = `${COLUMN_HEADERS.join(",")}\n`;
 		for (const entry of entries) {
-			csvContent += `${entry.date.toLocaleDateString()},${entry.courseName.replaceAll(",", "")},${entry.courseRating},${entry.slopeRating},${entry.score}\n`;
+			// Fixed en-US M/D/YYYY format so exports always round-trip through parseFile, regardless of the user's locale.
+			csvContent += `${entry.date.toLocaleDateString("en-US")},${entry.courseName.replaceAll(",", "")},${entry.courseRating},${entry.slopeRating},${entry.score}\n`;
 		}
 		const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
 		const url = URL.createObjectURL(blob);
@@ -97,6 +98,7 @@ export function App() {
 						</Button>
 						<Button
 							size="icon"
+							aria-label="Add Entry"
 							onClick={() => {
 								newEntry();
 								setHandicapVisible(false);
