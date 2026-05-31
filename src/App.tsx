@@ -28,7 +28,7 @@ const EMPTY_ENTRY = (): IEntry => ({
 const createInitialEntries = (): IEntry[] =>
 	window.location.hostname === "localhost"
 		? [...mockEntries]
-		: [EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()];
+		: [EMPTY_ENTRY()];
 
 export function App() {
 	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries);
