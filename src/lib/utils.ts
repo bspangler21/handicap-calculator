@@ -8,10 +8,14 @@ export function calculateHandicap(scores: IEntry[]) {
   let topScores = [...scores]
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .slice(0, 6);
-  // Remove the lowest score
-  topScores = topScores.sort((a, b) => a.score - b.score).slice(0, -1);
-  // Remove the highest score
-  topScores = topScores.sort((a, b) => b.score - a.score).slice(0, -1);
+
+  // Only drop the high/low outliers once there are enough rounds to keep at least one.
+  if (topScores.length >= 3) {
+    // Remove the lowest score
+    topScores = topScores.sort((a, b) => a.score - b.score).slice(0, -1);
+    // Remove the highest score
+    topScores = topScores.sort((a, b) => b.score - a.score).slice(0, -1);
+  }
 
   // Calculate handicap differential for each remaining score
   // Formula: (Score - Course Rating) * 113 / Slope Rating

@@ -28,7 +28,7 @@ const EMPTY_ENTRY = (): IEntry => ({
 const createInitialEntries = (): IEntry[] =>
 	window.location.hostname === "localhost"
 		? [...mockEntries]
-		: [EMPTY_ENTRY(), EMPTY_ENTRY(), EMPTY_ENTRY()];
+		: [EMPTY_ENTRY()];
 
 export function App() {
 	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries);
@@ -123,13 +123,22 @@ export function App() {
 				<main className="flex flex-1 flex-col overflow-y-auto px-2 py-2">
 					<section className="mb-5 px-2">
 						<p className="p-2 text-lg font-semibold">
-							To get started, add at least three entries, then click "Calculate Handicap".
+							To get started, add at least one entry, then click "Calculate Handicap".
 						</p>
 						<p className="mb-5 p-2">
-							The calculator removes your highest and lowest scores, then averages the handicap
-							differential of the remaining scores to determine your handicap index. You only need 3
-							scores to calculate a handicap, but the handicap will be more accurate if you add more
-							scores.
+							This handicap calculator is different than most since it allows you to calculate your
+							handicap with just{" "}
+							<u>
+								<i>
+									<b>one</b>
+								</i>
+							</u>{" "}
+							score, but the handicap will be more accurate if you add more scores.
+							<br />
+							<br />
+							If you have at least 3 scores, the calculator removes your highest and lowest scores,
+							then averages the handicap differential of the remaining scores to determine your
+							handicap index.
 							<br />
 							<br />
 							The formula for handicap differential is{" "}
@@ -161,7 +170,7 @@ export function App() {
 						<div className="flex flex-col items-center py-3">
 							<button
 								type="button"
-								disabled={getEligibleEntries().length < 3}
+								disabled={getEligibleEntries().length < 1}
 								onClick={() => setHandicapVisible(true)}
 								className="min-w-50 rounded bg-primary px-4 py-2 text-primary-foreground disabled:opacity-50 disabled:bg-[#d9d9d9] disabled:text-[#a9a9a9]"
 								aria-label="Calculate Handicap"
