@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 
 *tmpclaude*
+
+# Playwright
+playwright-report/
+test-results/

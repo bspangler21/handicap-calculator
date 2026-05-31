@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export type Theme = "dark" | "light" | "system";
 
@@ -29,6 +29,24 @@ export function ThemeProvider({
 	const [theme, setTheme] = useState<Theme>(
 		() => (localStorage.getItem(storageKey) as Theme) || defaultTheme
 	);
+
+	useEffect(() => {
+		const root = document.documentElement;
+		const applyDark = () => root.classList.add("dark");
+		const removeDark = () => root.classList.remove("dark");
+
+		if (theme === "dark") {
+			applyDark();
+		} else if (theme === "light") {
+			removeDark();
+		} else {
+			const mq = window.matchMedia("(prefers-color-scheme: dark)");
+			mq.matches ? applyDark() : removeDark();
+			const handler = (e: MediaQueryListEvent) => (e.matches ? applyDark() : removeDark());
+			mq.addEventListener("change", handler);
+			return () => mq.removeEventListener("change", handler);
+		}
+	}, [theme]);
 
 	const value = {
 		theme,
