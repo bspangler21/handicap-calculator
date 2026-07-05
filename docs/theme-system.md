@@ -14,7 +14,7 @@ Fluent UI is no longer used — it was removed during the Tailwind v4 migration.
 |------|------|
 | `src/providers/theme-provider.tsx` | Stores `"light" \| "dark" \| "system"` in state, persists to `localStorage` (`storageKey`, default `"app-theme"`), and toggles the `.dark` class on `document.documentElement` |
 | `src/hooks/use-theme.ts` | Thin hook to consume `ThemeProviderContext` |
-| `src/components/ModeToggle.tsx` | Radix `DropdownMenu` (via `src/components/ui/dropdown-menu.tsx`) that calls `setTheme("light" \| "dark" \| "system")` |
+| `src/components/ModeToggle.tsx` | Base UI `Menu` (via `src/components/ui/dropdown-menu.tsx`) that calls `setTheme("light" \| "dark" \| "system")` |
 | `src/index.css` | Defines all theme tokens in `:root` and `.dark`, and maps them to Tailwind color names via `@theme inline` |
 
 ## How It Works
