@@ -1,12 +1,14 @@
 import React from "react";
 import { ModeToggle } from "@/components/ModeToggle";
 import { ImportResultMessageBar } from "@/components/ImportResultMessageBar";
+import { SortControls } from "@/components/SortControls";
 import { Button } from "@/components/ui/button";
-import { calculateHandicap } from "@/lib/utils";
+import { calculateHandicap, sortEntries } from "@/lib/utils";
 import { COLUMN_HEADERS } from "@/lib/constants";
 import { useFileImport } from "@/hooks/useFileImport";
 import { ThemeProvider } from "@/providers/theme-provider";
 import type { IEntry } from "@/types/IEntry";
+import type { SortBy, SortOrder } from "@/types/sort";
 import type { IFileImportResult } from "@/types/IFileImportResult";
 import versionData from "@/version.json";
 import { Download, Plus, Upload } from "lucide-react";
@@ -30,18 +32,35 @@ const createInitialEntries = (): IEntry[] =>
 		? [...mockEntries]
 		: [EMPTY_ENTRY()];
 
+const DEFAULT_SORT_BY: SortBy = "date";
+const DEFAULT_ORDER: SortOrder = "desc";
+
 export function App() {
-	const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries);
+	const [entries, setEntries] = React.useState<IEntry[]>(() =>
+		sortEntries(createInitialEntries(), DEFAULT_SORT_BY, DEFAULT_ORDER)
+	);
+	const [sortBy, setSortBy] = React.useState<SortBy>(DEFAULT_SORT_BY);
+	const [order, setOrder] = React.useState<SortOrder>(DEFAULT_ORDER);
 	const [handicapVisible, setHandicapVisible] = React.useState(false);
 	const [importResult, setImportResult] = React.useState<IFileImportResult | null>(null);
 
 	const handleImport = React.useCallback((result: IFileImportResult) => {
 		setImportResult(result);
 		if (result.imported.length > 0) {
-			setEntries(result.imported);
+			setEntries(sortEntries(result.imported, sortBy, order));
 			setHandicapVisible(false);
 		}
-	}, []);
+	}, [sortBy, order]);
+
+	const handleSortByChange = (value: SortBy) => {
+		setSortBy(value);
+		setEntries((prev) => sortEntries(prev, value, order));
+	};
+
+	const handleOrderChange = (value: SortOrder) => {
+		setOrder(value);
+		setEntries((prev) => sortEntries(prev, sortBy, value));
+	};
 
 	const { fileInputRef, triggerFilePicker, handleFileChange } = useFileImport(handleImport);
 
@@ -148,6 +167,12 @@ export function App() {
 					</section>
 
 					<section className="flex flex-1 flex-col">
+						<SortControls
+							sortBy={sortBy}
+							order={order}
+							onSortByChange={handleSortByChange}
+							onOrderChange={handleOrderChange}
+						/>
 						<div className="hidden w-full flex-row gap-10 px-1 py-1 sm:flex">
 							<div className="w-10 min-w-10 shrink-0" />
 							{columnHeaders.map((header) => (

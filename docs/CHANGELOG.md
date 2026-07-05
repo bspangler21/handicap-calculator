@@ -2,6 +2,24 @@
 
 All notable changes are documented in this file.
 
+## [2026-07-05]
+
+### Summary
+
+Added on-screen sorting for score entries (issue #28). Two Radix Select controls let the user reorder the entered rounds by Date, Course, or Score in ascending or descending order, defaulting to Date/Descending (newest first). Sorting is presentational only: it reorders the rows on screen without affecting the handicap calculation or CSV import/export.
+
+### Added
+
+- **`src/types/sort.ts`**: `SortBy` (`"date" | "course" | "score"`) and `SortOrder` (`"asc" | "desc"`) string-union types.
+- **`src/components/ui/select.tsx`**: shadcn/Radix Select primitive wrappers (`Select`, `SelectTrigger`, `SelectValue`, `SelectContent`, `SelectItem`).
+- **`src/components/SortControls.tsx`**: Two labeled Select controls ("Sort by", "Order") wired to `aria-labelledby` for accessible names.
+- **`src/lib/utils.ts`**: `sortEntries(entries, sortBy, order)`, a pure function returning a new array. Empty or whitespace-only course names always sink to the bottom regardless of direction, and an exhaustiveness guard turns an unhandled `SortBy` into a compile error.
+
+### Changed
+
+- **`src/App.tsx`**: Added `sortBy`/`order` state (default Date/Descending), change handlers that re-sort on selection, initial entries sorted on mount, imported CSV rows sorted on import, and mounted `SortControls` above the entry list.
+- **`tests/app.spec.ts`**: Added a "sorting controls" suite covering the default Date/Descending order, sorting by Course, and reversing via the Order control. The win32 visual snapshot was regenerated; the Linux Playwright baseline still needs regeneration in CI.
+
 ## [2026-04-30]
 
 ### Summary
