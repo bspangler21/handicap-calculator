@@ -9,6 +9,7 @@ import {
 	InputGroupInput,
 } from "@/components/ui/input-group";
 import type { IEntry } from "@/types/IEntry";
+import { Input } from "@/components/ui/input";
 
 interface EntryRowProps {
 	entry: IEntry;
@@ -81,12 +82,14 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 					/>
 					<InputGroupAddon align="inline-end">
 						<Popover open={open} onOpenChange={setOpen}>
-							<PopoverTrigger asChild>
-								<InputGroupButton variant="ghost" size="icon-xs" aria-label="Select date">
-									<CalendarIcon />
-									<span className="sr-only">Select date</span>
-								</InputGroupButton>
-							</PopoverTrigger>
+							<PopoverTrigger
+								render={
+									<InputGroupButton variant="ghost" size="icon-xs" aria-label="Select date">
+										<CalendarIcon />
+										<span className="sr-only">Select date</span>
+									</InputGroupButton>
+								}
+							/>
 							<PopoverContent
 								className="w-auto overflow-hidden p-0"
 								align="end"
@@ -116,7 +119,7 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 
 			<div className={inputContainer}>
 				<label className={inputLabel}>Course Name</label>
-				<input
+				<Input
 					type="text"
 					value={entry.courseName}
 					onChange={(e) => onUpdate(entry.id, "courseName", e.target.value)}
