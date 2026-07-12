@@ -6,6 +6,7 @@ import {
 	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuGroup,
 } from "./ui/dropdown-menu";
 
 const themeOptions = [
@@ -36,15 +37,17 @@ export function ModeToggle() {
 				}
 			/>
 			<DropdownMenuContent align="end" className="w-32 bg-app-background text-app-foreground">
-				{themeOptions.map((option) => {
-					const OptionIcon = option.icon;
-					return (
-						<DropdownMenuItem key={option.value} onSelect={() => setTheme(option.value)}>
-							<OptionIcon className="h-4 w-4" />
-							{option.label}
-						</DropdownMenuItem>
-					);
-				})}
+				<DropdownMenuGroup>
+					{themeOptions.map((option) => {
+						const OptionIcon = option.icon;
+						return (
+							<DropdownMenuItem key={option.value} onClick={() => setTheme(option.value)}>
+								<OptionIcon className="h-4 w-4" />
+								{option.label}
+							</DropdownMenuItem>
+						);
+					})}
+				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

@@ -103,7 +103,7 @@ export function App() {
 								newEntry();
 								setHandicapVisible(false);
 							}}
-							className="sm:w-auto sm:min-w-35 h-10 sm:px-2.5 sm:gap-1.5 bg-button-bg text-input-text"
+							className="sm:w-auto sm:min-w-35 h-10 sm:px-2.5 sm:gap-1.5 border border-white hover:font-bold"
 						>
 							<Plus />
 							<span className="hidden sm:inline">Add Entry</span>
