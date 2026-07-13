@@ -163,47 +163,49 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
         />
       </div>
 
-			<div className={INPUT_CONTAINER_CLASS}>
-				<label className={INPUT_LABEL_CLASS}>Score</label>
-				<div className="flex flex-row items-center gap-2">
-					<Input
-						type="number"
-						value={scoreInput ?? entry.score.toString()}
-						onChange={(e) => {
-							setScoreInput(e.target.value);
-							onResetHandicap();
-						}}
-						onBlur={() => {
-							if (!scoreInput || scoreInput.trim() === "") {
-								setScoreInput(undefined);
-								return;
-							}
-							const parsed = Number(scoreInput);
-							if (!Number.isNaN(parsed)) onUpdate(entry.id, "score", parsed);
-							setScoreInput(undefined);
-						}}
-						className={`${INPUT_FIELD_CLASS} flex-1 min-w-0`}
-					/>
-					<label
-						title="Check if this was a 9-hole round (score is doubled in the handicap calculation)"
-						className="flex min-h-6 cursor-pointer items-center gap-1"
-					>
-						<Checkbox
-							aria-label="9-hole score"
-							aria-describedby={`nine-hole-desc-${entry.id}`}
-							checked={entry.isNineHole}
-							onCheckedChange={(checked) => {
-								onUpdate(entry.id, "isNineHole", checked);
-								onResetHandicap();
-							}}
-						/>
-						<span aria-hidden="true" className="whitespace-nowrap text-sm font-semibold">9-hole</span>
-						<span id={`nine-hole-desc-${entry.id}`} className="sr-only">
-							Score is doubled in the handicap calculation
-						</span>
-					</label>
-				</div>
-			</div>
-		</div>
-	);
+      <div className={INPUT_CONTAINER_CLASS}>
+        <label className={INPUT_LABEL_CLASS}>Score</label>
+        <div className="flex flex-row items-center gap-2">
+          <Input
+            type="number"
+            value={scoreInput ?? entry.score.toString()}
+            onChange={(e) => {
+              setScoreInput(e.target.value);
+              onResetHandicap();
+            }}
+            onBlur={() => {
+              if (!scoreInput || scoreInput.trim() === "") {
+                setScoreInput(undefined);
+                return;
+              }
+              const parsed = Number(scoreInput);
+              if (!Number.isNaN(parsed)) onUpdate(entry.id, "score", parsed);
+              setScoreInput(undefined);
+            }}
+            className={`${INPUT_FIELD_CLASS} min-w-0 flex-1`}
+          />
+          <label
+            title="Check if this was a 9-hole round (score is doubled in the handicap calculation)"
+            className="flex min-h-6 cursor-pointer items-center gap-1"
+          >
+            <Checkbox
+              aria-label="9-hole score"
+              aria-describedby={`nine-hole-desc-${entry.id}`}
+              checked={entry.isNineHole}
+              onCheckedChange={(checked) => {
+                onUpdate(entry.id, "isNineHole", checked);
+                onResetHandicap();
+              }}
+            />
+            <span aria-hidden="true" className="text-sm font-semibold whitespace-nowrap">
+              9-hole
+            </span>
+            <span id={`nine-hole-desc-${entry.id}`} className="sr-only">
+              Score is doubled in the handicap calculation
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  );
 }
