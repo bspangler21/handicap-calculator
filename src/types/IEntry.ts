@@ -5,4 +5,5 @@ export interface IEntry {
   courseRating: number;
   slopeRating: number;
   score: number;
+  isNineHole: boolean;
 }

@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/input-group";
 import type { IEntry } from "@/types/IEntry";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface EntryRowProps {
 	entry: IEntry;
-	onUpdate: (id: string, field: keyof IEntry, value: string | number | Date) => void;
+	onUpdate: <K extends keyof IEntry>(id: string, field: K, value: IEntry[K]) => void;
 	onRemove: (id: string) => void;
 	onResetHandicap: () => void;
 }
@@ -178,24 +179,44 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 
 			<div className={INPUT_CONTAINER_CLASS}>
 				<label className={INPUT_LABEL_CLASS}>Score</label>
-				<Input
-					type="number"
-					value={scoreInput ?? entry.score.toString()}
-					onChange={(e) => {
-						setScoreInput(e.target.value);
-						onResetHandicap();
-					}}
-					onBlur={() => {
-						if (!scoreInput || scoreInput.trim() === "") {
+				<div className="flex flex-row items-center gap-2">
+					<Input
+						type="number"
+						value={scoreInput ?? entry.score.toString()}
+						onChange={(e) => {
+							setScoreInput(e.target.value);
+							onResetHandicap();
+						}}
+						onBlur={() => {
+							if (!scoreInput || scoreInput.trim() === "") {
+								setScoreInput(undefined);
+								return;
+							}
+							const parsed = Number(scoreInput);
+							if (!Number.isNaN(parsed)) onUpdate(entry.id, "score", parsed);
 							setScoreInput(undefined);
-							return;
-						}
-						const parsed = Number(scoreInput);
-						if (!Number.isNaN(parsed)) onUpdate(entry.id, "score", parsed);
-						setScoreInput(undefined);
-					}}
-					className={INPUT_FIELD_CLASS}
-				/>
+						}}
+						className={`${INPUT_FIELD_CLASS} flex-1 min-w-0`}
+					/>
+					<label
+						title="Check if this was a 9-hole round (score is doubled in the handicap calculation)"
+						className="flex min-h-6 cursor-pointer items-center gap-1"
+					>
+						<Checkbox
+							aria-label="9-hole score"
+							aria-describedby={`nine-hole-desc-${entry.id}`}
+							checked={entry.isNineHole}
+							onCheckedChange={(checked) => {
+								onUpdate(entry.id, "isNineHole", checked);
+								onResetHandicap();
+							}}
+						/>
+						<span aria-hidden="true" className="text-sm font-semibold">9</span>
+						<span id={`nine-hole-desc-${entry.id}`} className="sr-only">
+							Score is doubled in the handicap calculation
+						</span>
+					</label>
+				</div>
 			</div>
 		</div>
 	);
