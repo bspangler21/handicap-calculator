@@ -211,7 +211,7 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 								onResetHandicap();
 							}}
 						/>
-						<span aria-hidden="true" className="text-sm font-semibold">9</span>
+						<span aria-hidden="true" className="whitespace-nowrap text-sm font-semibold">9-hole</span>
 						<span id={`nine-hole-desc-${entry.id}`} className="sr-only">
 							Score is doubled in the handicap calculation
 						</span>
