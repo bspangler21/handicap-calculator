@@ -10,12 +10,12 @@ Fluent UI is no longer used — it was removed during the Tailwind v4 migration.
 
 ## Files Involved
 
-| File | Role |
-|------|------|
+| File                               | Role                                                                                                                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `src/providers/theme-provider.tsx` | Stores `"light" \| "dark" \| "system"` in state, persists to `localStorage` (`storageKey`, default `"app-theme"`), and toggles the `.dark` class on `document.documentElement` |
-| `src/hooks/use-theme.ts` | Thin hook to consume `ThemeProviderContext` |
-| `src/components/ModeToggle.tsx` | Radix `DropdownMenu` (via `src/components/ui/dropdown-menu.tsx`) that calls `setTheme("light" \| "dark" \| "system")` |
-| `src/index.css` | Defines all theme tokens in `:root` and `.dark`, and maps them to Tailwind color names via `@theme inline` |
+| `src/hooks/use-theme.ts`           | Thin hook to consume `ThemeProviderContext`                                                                                                                                    |
+| `src/components/ModeToggle.tsx`    | Radix `DropdownMenu` (via `src/components/ui/dropdown-menu.tsx`) that calls `setTheme("light" \| "dark" \| "system")`                                                          |
+| `src/index.css`                    | Defines all theme tokens in `:root` and `.dark`, and maps them to Tailwind color names via `@theme inline`                                                                     |
 
 ## How It Works
 
@@ -51,14 +51,14 @@ User selects a theme in ModeToggle
 
 ## Color Classes in Use
 
-| Class | Resolves To (token) | Used For |
-|-------|---------------------|----------|
-| `bg-app-background` | `var(--app-background)` | Page background |
-| `text-app-foreground` | `var(--app-foreground)` | Body text, labels, icons |
-| `bg-surface` | `var(--surface)` | Entry row cards |
-| `bg-input-bg` / `text-input-text` / `border-input-border` | input tokens | Form fields |
-| `bg-button-bg` / `text-button-text` | button tokens | Buttons |
-| `bg-primary` / `text-primary-foreground` | brand green `#4E705C` / white | Header and footer |
+| Class                                                     | Resolves To (token)           | Used For                 |
+| --------------------------------------------------------- | ----------------------------- | ------------------------ |
+| `bg-app-background`                                       | `var(--app-background)`       | Page background          |
+| `text-app-foreground`                                     | `var(--app-foreground)`       | Body text, labels, icons |
+| `bg-surface`                                              | `var(--surface)`              | Entry row cards          |
+| `bg-input-bg` / `text-input-text` / `border-input-border` | input tokens                  | Form fields              |
+| `bg-button-bg` / `text-button-text`                       | button tokens                 | Buttons                  |
+| `bg-primary` / `text-primary-foreground`                  | brand green `#4E705C` / white | Header and footer        |
 
 `--primary` and `--primary-foreground` are declared in both `:root` and `.dark` with the same value — the brand green does not change between modes.
 
