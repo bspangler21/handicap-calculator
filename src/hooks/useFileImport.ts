@@ -20,7 +20,10 @@ export function parseFile(text: string): IFileImportResult {
   if (lines.length === 0) return { imported: [], skipped: [] };
 
   const headerColumns = lines[0].split(",").map((h) => h.trim());
-  const headersMatch = COLUMN_HEADERS.every((h, i) => headerColumns[i] === h) && (headerColumns.length < 6 || headerColumns[5] === "9 Hole");
+  const headersMatch =
+    (headerColumns.length === 5 || headerColumns.length === 6) &&
+    COLUMN_HEADERS.every((h, i) => headerColumns[i] === h) &&
+    (headerColumns.length === 5 || headerColumns[5] === "9 Hole");
   if (!headersMatch) {
     return {
       imported: [],
@@ -28,7 +31,7 @@ export function parseFile(text: string): IFileImportResult {
         {
           rowIndex: 0,
           raw: lines[0],
-          reason: `Invalid header. Expected: "${COLUMN_HEADERS.join(",")}", got "${lines[0]}"`,
+          reason: `Invalid header. Expected "${COLUMN_HEADERS.join(",")}" or "${CSV_HEADERS.join(",")}", got "${lines[0]}"`,
         },
       ],
     };
