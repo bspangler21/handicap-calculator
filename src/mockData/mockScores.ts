@@ -8,6 +8,7 @@ export const mockScores: IEntry[] = [
 		courseRating: 75.5,
 		slopeRating: 145,
 		score: 85,
+		isNineHole: false,
 	},
 	{
 		id: "2",
@@ -16,6 +17,7 @@ export const mockScores: IEntry[] = [
 		courseRating: 72.0,
 		slopeRating: 130,
 		score: 78,
+		isNineHole: false,
 	},
 	{
 		id: "3",
@@ -24,5 +26,6 @@ export const mockScores: IEntry[] = [
 		courseRating: 74.0,
 		slopeRating: 140,
 		score: 82,
+		isNineHole: false,
 	},
 ];

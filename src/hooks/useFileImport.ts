@@ -2,7 +2,7 @@ import React from "react";
 import type { IEntry } from "../types/IEntry";
 import type { ISkippedRow } from "../types/ISkippedRow";
 import type { IFileImportResult } from "../types/IFileImportResult";
-import { COLUMN_HEADERS } from "../lib/constants";
+import { COLUMN_HEADERS, CSV_HEADERS } from "../lib/constants";
 
 function parseDate(raw: string): Date | null {
 	const trimmed = raw.trim();
@@ -20,7 +20,10 @@ export function parseFile(text: string): IFileImportResult {
 	if (lines.length === 0) return { imported: [], skipped: [] };
 
 	const headerColumns = lines[0].split(",").map((h) => h.trim());
-	const headersMatch = COLUMN_HEADERS.every((h, i) => headerColumns[i] === h);
+	const headersMatch =
+		(headerColumns.length === 5 || headerColumns.length === 6) &&
+		COLUMN_HEADERS.every((h, i) => headerColumns[i] === h) &&
+		(headerColumns.length === 5 || headerColumns[5] === "9 Hole");
 	if (!headersMatch) {
 		return {
 			imported: [],
@@ -28,7 +31,7 @@ export function parseFile(text: string): IFileImportResult {
 				{
 					rowIndex: 0,
 					raw: lines[0],
-					reason: `Invalid header. Expected: "${COLUMN_HEADERS.join(",")}", got "${lines[0]}"`,
+					reason: `Invalid header. Expected "${COLUMN_HEADERS.join(",")}" or "${CSV_HEADERS.join(",")}", got "${lines[0]}"`,
 				},
 			],
 		};
@@ -41,12 +44,12 @@ export function parseFile(text: string): IFileImportResult {
 		const raw = lines[i];
 		const cols = raw.split(",");
 
-		if (cols.length !== COLUMN_HEADERS.length) {
-			skipped.push({ rowIndex: i, raw, reason: `Expected ${COLUMN_HEADERS.length} columns, got ${cols.length}.` });
+		if (cols.length !== 5 && cols.length !== 6) {
+			skipped.push({ rowIndex: i, raw, reason: `Expected 5 or 6 columns, got ${cols.length}.` });
 			continue;
 		}
 
-		const [rawDate, rawCourseName, rawCourseRating, rawSlopeRating, rawScore] = cols.map((c) => c.trim());
+		const [rawDate, rawCourseName, rawCourseRating, rawSlopeRating, rawScore, rawNineHole] = cols.map((c) => c.trim());
 
 		const date = parseDate(rawDate);
 		if (!date) {
@@ -77,7 +80,22 @@ export function parseFile(text: string): IFileImportResult {
 			continue;
 		}
 
-		imported.push({ id: crypto.randomUUID(), date, courseName: rawCourseName, courseRating, slopeRating, score });
+		if (
+			rawNineHole !== undefined &&
+			rawNineHole !== "" &&
+			!/^(true|yes|1)$/i.test(rawNineHole) &&
+			!/^(false|no|0)$/i.test(rawNineHole)
+		) {
+			skipped.push({
+				rowIndex: i,
+				raw,
+				reason: `Invalid 9-hole flag "${rawNineHole}". Expected true/false, yes/no, or 1/0.`,
+			});
+			continue;
+		}
+		const isNineHole = /^(true|yes|1)$/i.test(rawNineHole ?? "");
+
+		imported.push({ id: crypto.randomUUID(), date, courseName: rawCourseName, courseRating, slopeRating, score, isNineHole });
 	}
 
 	return { imported, skipped };

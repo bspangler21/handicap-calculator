@@ -3,7 +3,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 import { ImportResultMessageBar } from "@/components/ImportResultMessageBar";
 import { Button } from "@/components/ui/button";
 import { calculateHandicap } from "@/lib/utils";
-import { COLUMN_HEADERS } from "@/lib/constants";
+import { COLUMN_HEADERS, CSV_HEADERS } from "@/lib/constants";
 import { useFileImport } from "@/hooks/useFileImport";
 import { ThemeProvider } from "@/providers/theme-provider";
 import type { IEntry } from "@/types/IEntry";
@@ -23,6 +23,7 @@ const EMPTY_ENTRY = (): IEntry => ({
 	courseRating: 0,
 	slopeRating: 0,
 	score: 0,
+	isNineHole: false,
 });
 
 const createInitialEntries = (): IEntry[] =>
@@ -46,10 +47,10 @@ export function App() {
 	const { fileInputRef, triggerFilePicker, handleFileChange } = useFileImport(handleImport);
 
 	const exportData = () => {
-		let csvContent = `${COLUMN_HEADERS.join(",")}\n`;
+		let csvContent = `${CSV_HEADERS.join(",")}\n`;
 		for (const entry of entries) {
 			// Fixed en-US M/D/YYYY format so exports always round-trip through parseFile, regardless of the user's locale.
-			csvContent += `${entry.date.toLocaleDateString("en-US")},${entry.courseName.replaceAll(",", "")},${entry.courseRating},${entry.slopeRating},${entry.score}\n`;
+			csvContent += `${entry.date.toLocaleDateString("en-US")},${entry.courseName.replaceAll(",", "")},${entry.courseRating},${entry.slopeRating},${entry.score},${entry.isNineHole ? "true" : "false"}\n`;
 		}
 		const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
 		const url = URL.createObjectURL(blob);
@@ -69,7 +70,7 @@ export function App() {
 		setEntries((prev) => [...prev, EMPTY_ENTRY()]);
 	};
 
-	const updateEntry = (id: string, field: keyof IEntry, value: string | number | Date) => {
+	const updateEntry = <K extends keyof IEntry,>(id: string, field: K, value: IEntry[K]) => {
 		setEntries((prev) =>
 			prev.map((entry) => (entry.id === id ? { ...entry, [field]: value } : entry))
 		);

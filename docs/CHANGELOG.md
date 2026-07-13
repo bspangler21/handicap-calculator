@@ -2,6 +2,27 @@
 
 All notable changes are documented in this file.
 
+## [2026-07-12]
+
+### Summary
+
+Adds a per-entry "9-hole" checkbox to each score row. When an entry is marked as a 9-hole round, its score is doubled inside the handicap calculation only; the raw score stays displayed and stored unchanged. CSV export gains a sixth "9 Hole" column, and CSV import stays backward compatible with existing five-column files (the flag defaults to false when the column is absent).
+
+### Added
+
+- **`src/components/ui/checkbox.tsx`**: New Base UI (`@base-ui/react/checkbox`) checkbox wrapper in the shadcn-on-Base-UI style, matching the existing `separator.tsx` pattern.
+- **`src/types/IEntry.ts`**: `IEntry` gains an `isNineHole: boolean` field.
+- **`src/lib/constants.ts`**: New `CSV_HEADERS = [...COLUMN_HEADERS, "9 Hole"]` so the exported file carries a sixth column; the on-screen table header stays five columns.
+- **`tests/app.spec.ts`**: Five new Playwright tests covering the checkbox, the doubling behavior, and CSV round-trips; the `-win32` visual snapshot was regenerated.
+
+### Changed
+
+- **`src/components/EntryRow.tsx`**: The Score cell now renders the Score input plus a "9-hole" checkbox to its right, both inside the same `flex-1` Score cell, so the centered "Score" header and the five-column layout stay unchanged. One unified layout serves mobile and desktop (the checkbox is never conditionally rendered by screen size). The control has the accessible name "9-hole score", a `min-h-6` target, an `aria-describedby` pointing at an sr-only "Score is doubled in the handicap calculation", and an aria-hidden "9-hole" text label. `onUpdate` is now generic: `<K extends keyof IEntry>(id, field: K, value: IEntry[K])`.
+- **`src/lib/utils.ts`**: Added a module-private `effectiveScore(entry)` helper that doubles the score for 9-hole entries; the doubling is applied consistently in both the high/low outlier removal and the differential.
+- **`src/App.tsx`**: `EMPTY_ENTRY` sets `isNineHole: false`, `exportData` writes the sixth CSV column ("true"/"false"), and `updateEntry` is now generic.
+- **`src/hooks/useFileImport.ts`**: `parseFile` accepts 5 or 6 columns. Legacy five-column files still import with the flag defaulting to false; the sixth header ("9 Hole") is validated when present; and a row is skipped with a reason when the sixth value is present but unrecognized.
+- **`src/mockData/mockScores.ts`**: All mock entries set `isNineHole: false`.
+
 ## [2026-04-30]
 
 ### Summary
