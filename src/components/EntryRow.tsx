@@ -9,6 +9,7 @@ import {
 	InputGroupInput,
 } from "@/components/ui/input-group";
 import type { IEntry } from "@/types/IEntry";
+import { Input } from "@/components/ui/input";
 
 interface EntryRowProps {
 	entry: IEntry;
@@ -22,14 +23,18 @@ function formatDate(date: Date | undefined): string {
 	return date.toLocaleDateString("en-US", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-const inputContainer = "flex flex-col min-w-0 flex-1 p-1";
-const inputLabel = "mb-1 text-sm font-semibold sm:hidden";
+const INPUT_CONTAINER_CLASS = "flex flex-col min-w-0 flex-1 p-1";
+const INPUT_LABEL_CLASS = "mb-1 text-sm font-semibold sm:hidden";
+const INPUT_FIELD_CLASS =
+	"w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text";
 
 export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRowProps) {
 	const [open, setOpen] = React.useState(false);
 	const [month, setMonth] = React.useState<Date>(entry.date);
 	const [dateInput, setDateInput] = React.useState(() => formatDate(entry.date));
 	const [courseRatingInput, setCourseRatingInput] = React.useState<string | undefined>(undefined);
+	const [slopeRatingInput, setSlopeRatingInput] = React.useState<string | undefined>(undefined);
+	const [scoreInput, setScoreInput] = React.useState<string | undefined>(undefined);
 
 	return (
 		<div
@@ -58,8 +63,8 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 				</button>
 			</div>
 
-			<div className={inputContainer}>
-				<label className={inputLabel}>Date</label>
+			<div className={INPUT_CONTAINER_CLASS}>
+				<label className={INPUT_LABEL_CLASS}>Date</label>
 				<InputGroup className="bg-input-bg!">
 					<InputGroupInput
 						value={dateInput}
@@ -81,12 +86,14 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 					/>
 					<InputGroupAddon align="inline-end">
 						<Popover open={open} onOpenChange={setOpen}>
-							<PopoverTrigger asChild>
-								<InputGroupButton variant="ghost" size="icon-xs" aria-label="Select date">
-									<CalendarIcon />
-									<span className="sr-only">Select date</span>
-								</InputGroupButton>
-							</PopoverTrigger>
+							<PopoverTrigger
+								render={
+									<InputGroupButton variant="ghost" size="icon-xs" aria-label="Select date">
+										<CalendarIcon />
+										<span className="sr-only">Select date</span>
+									</InputGroupButton>
+								}
+							/>
 							<PopoverContent
 								className="w-auto overflow-hidden p-0"
 								align="end"
@@ -114,19 +121,19 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 				</InputGroup>
 			</div>
 
-			<div className={inputContainer}>
-				<label className={inputLabel}>Course Name</label>
-				<input
+			<div className={INPUT_CONTAINER_CLASS}>
+				<label className={INPUT_LABEL_CLASS}>Course Name</label>
+				<Input
 					type="text"
 					value={entry.courseName}
 					onChange={(e) => onUpdate(entry.id, "courseName", e.target.value)}
-					className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
+					className={INPUT_FIELD_CLASS}
 				/>
 			</div>
 
-			<div className={inputContainer}>
-				<label className={inputLabel}>Course Rating</label>
-				<input
+			<div className={INPUT_CONTAINER_CLASS}>
+				<label className={INPUT_LABEL_CLASS}>Course Rating</label>
+				<Input
 					type="number"
 					step="0.1"
 					value={courseRatingInput ?? entry.courseRating.toString()}
@@ -143,33 +150,51 @@ export function EntryRow({ entry, onUpdate, onRemove, onResetHandicap }: EntryRo
 						if (!Number.isNaN(parsed)) onUpdate(entry.id, "courseRating", parsed);
 						setCourseRatingInput(undefined);
 					}}
-					className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
+					className={INPUT_FIELD_CLASS}
 				/>
 			</div>
 
-			<div className={inputContainer}>
-				<label className={inputLabel}>Slope Rating</label>
-				<input
+			<div className={INPUT_CONTAINER_CLASS}>
+				<label className={INPUT_LABEL_CLASS}>Slope Rating</label>
+				<Input
 					type="number"
-					value={entry.slopeRating.toString()}
+					value={slopeRatingInput ?? entry.slopeRating.toString()}
 					onChange={(e) => {
-						onUpdate(entry.id, "slopeRating", Number(e.target.value));
+						setSlopeRatingInput(e.target.value);
 						onResetHandicap();
 					}}
-					className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
+					onBlur={() => {
+						if (!slopeRatingInput || slopeRatingInput.trim() === "") {
+							setSlopeRatingInput(undefined);
+							return;
+						}
+						const parsed = Number(slopeRatingInput);
+						if (!Number.isNaN(parsed)) onUpdate(entry.id, "slopeRating", parsed);
+						setSlopeRatingInput(undefined);
+					}}
+					className={INPUT_FIELD_CLASS}
 				/>
 			</div>
 
-			<div className={inputContainer}>
-				<label className={inputLabel}>Score</label>
-				<input
+			<div className={INPUT_CONTAINER_CLASS}>
+				<label className={INPUT_LABEL_CLASS}>Score</label>
+				<Input
 					type="number"
-					value={entry.score.toString()}
+					value={scoreInput ?? entry.score.toString()}
 					onChange={(e) => {
-						onUpdate(entry.id, "score", Number(e.target.value));
+						setScoreInput(e.target.value);
 						onResetHandicap();
 					}}
-					className="w-full rounded border border-input-border bg-input-bg px-2 py-1 text-input-text"
+					onBlur={() => {
+						if (!scoreInput || scoreInput.trim() === "") {
+							setScoreInput(undefined);
+							return;
+						}
+						const parsed = Number(scoreInput);
+						if (!Number.isNaN(parsed)) onUpdate(entry.id, "score", parsed);
+						setScoreInput(undefined);
+					}}
+					className={INPUT_FIELD_CLASS}
 				/>
 			</div>
 		</div>
