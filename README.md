@@ -4,10 +4,10 @@ A browser-based tool for calculating a golf handicap index from manually entered
 
 ## How the calculation works
 
-The app requires **at least three rounds** with valid scores before it will calculate. Given the entered rounds, it:
+Given the entered round(s), it:
 
 1. Sorts all rounds by date and takes the most recent six.
-2. Removes the single lowest and single highest score from that set.
+2. Removes the single lowest and single highest score from that set (if there 3 or more rounds).
 3. Calculates the **handicap differential** for each remaining round using the USGA formula:
 
 $$\text{Differential} = \frac{(\text{Score} - \text{Course Rating}) \times 113}{\text{Slope Rating}}$$
@@ -20,8 +20,8 @@ $$\text{Differential} = \frac{(\text{Score} - \text{Course Rating}) \times 113}{
 |---|---|
 | Framework | React 19 |
 | Language | TypeScript 5.9 |
-| Build tool | Vite 7 |
-| UI components | Fluent UI v9 (`@fluentui/react-components`, `@fluentui/react-datepicker-compat`, `@fluentui/react-icons`) |
+| Build tool | Vite 8 |
+| UI components | shadcn/ui v4 |
 | Styling | Tailwind CSS v4 |
 | Linting | ESLint 9 with `typescript-eslint` |
 
@@ -64,4 +64,3 @@ The app runs at `http://localhost:5173` by default.
 - **`IEntry` is the central data type.** Every round is represented as an `IEntry` object. The `id` field is a `crypto.randomUUID()` value used as the React list key and for targeted state updates.
 - **`calculateHandicap` is a pure function** in `src/lib/util.ts`. It receives the full `IEntry[]` array and returns the computed handicap index as a `number`. Logic changes to the formula belong there.
 - **Course rating input uses a local string buffer** (`courseRatingInput` state) to support decimal typing without React interfering mid-keystroke. The parsed `number` is committed to the entry on `onBlur`.
-- **The "Calculate Handicap" button is disabled** until at least three entries have a non-zero `score`, `courseRating`, and `slopeRating`.
