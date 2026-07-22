@@ -24,21 +24,18 @@ export function ThemeProvider({ children, defaultTheme = "system", storageKey = 
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem(storageKey) as Theme) || defaultTheme);
 
   useEffect(() => {
-    const root = document.documentElement;
-    const applyDark = () => root.classList.add("dark");
-    const removeDark = () => root.classList.remove("dark");
+    const root = window.document.documentElement;
 
-    if (theme === "dark") {
-      applyDark();
-    } else if (theme === "light") {
-      removeDark();
-    } else {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      mq.matches ? applyDark() : removeDark();
-      const handler = (e: MediaQueryListEvent) => (e.matches ? applyDark() : removeDark());
-      mq.addEventListener("change", handler);
-      return () => mq.removeEventListener("change", handler);
+    root.classList.remove("light", "dark");
+
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
+      root.classList.add(systemTheme);
+      return;
     }
+
+    root.classList.add(theme);
   }, [theme]);
 
   const value = {
