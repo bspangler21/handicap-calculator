@@ -8,7 +8,7 @@ var packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"));
 
 // Parse major.minor.patch — increment patch
 var parts = packageJson.version.split(".").map(function (p) {
-	return parseInt(p, 10);
+  return parseInt(p, 10);
 });
 parts[2] = parts[2] + 1;
 var newVersion = parts.join(".");

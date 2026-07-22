@@ -5,124 +5,120 @@ import type { IFileImportResult } from "../types/IFileImportResult";
 import { COLUMN_HEADERS, CSV_HEADERS } from "../lib/constants";
 
 function parseDate(raw: string): Date | null {
-	const trimmed = raw.trim();
-	const mdy = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-	if (mdy) {
-		const dt = new Date(parseInt(mdy[3]), parseInt(mdy[1]) - 1, parseInt(mdy[2]));
-		return isNaN(dt.getTime()) ? null : dt;
-	}
-	return null;
+  const trimmed = raw.trim();
+  const mdy = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (mdy) {
+    const dt = new Date(parseInt(mdy[3]), parseInt(mdy[1]) - 1, parseInt(mdy[2]));
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+  return null;
 }
 
 export function parseFile(text: string): IFileImportResult {
-	const lines: string[] = text.split(/\r?\n/).filter((l) => l.trim() !== "");
+  const lines: string[] = text.split(/\r?\n/).filter((l) => l.trim() !== "");
 
-	if (lines.length === 0) return { imported: [], skipped: [] };
+  if (lines.length === 0) return { imported: [], skipped: [] };
 
-	const headerColumns = lines[0].split(",").map((h) => h.trim());
-	const headersMatch =
-		(headerColumns.length === 5 || headerColumns.length === 6) &&
-		COLUMN_HEADERS.every((h, i) => headerColumns[i] === h) &&
-		(headerColumns.length === 5 || headerColumns[5] === "9 Hole");
-	if (!headersMatch) {
-		return {
-			imported: [],
-			skipped: [
-				{
-					rowIndex: 0,
-					raw: lines[0],
-					reason: `Invalid header. Expected "${COLUMN_HEADERS.join(",")}" or "${CSV_HEADERS.join(",")}", got "${lines[0]}"`,
-				},
-			],
-		};
-	}
+  const headerColumns = lines[0].split(",").map((h) => h.trim());
+  const expectedFive = COLUMN_HEADERS.join(",");
+  const expectedSix = CSV_HEADERS.join(",");
+  const headersMatch =
+    (headerColumns.length === 5 && headerColumns.join(",") === expectedFive) ||
+    (headerColumns.length === 6 && headerColumns.join(",") === expectedSix);
+  if (!headersMatch) {
+    return {
+      imported: [],
+      skipped: [
+        {
+          rowIndex: 0,
+          raw: lines[0],
+          reason: `Invalid header. Expected "${expectedFive}" or "${expectedSix}", got "${lines[0]}"`,
+        },
+      ],
+    };
+  }
 
-	const imported: IEntry[] = [];
-	const skipped: ISkippedRow[] = [];
+  const imported: IEntry[] = [];
+  const skipped: ISkippedRow[] = [];
 
-	for (let i = 1; i < lines.length; i++) {
-		const raw = lines[i];
-		const cols = raw.split(",");
+  for (let i = 1; i < lines.length; i++) {
+    const raw = lines[i];
+    const cols = raw.split(",");
 
-		if (cols.length !== 5 && cols.length !== 6) {
-			skipped.push({ rowIndex: i, raw, reason: `Expected 5 or 6 columns, got ${cols.length}.` });
-			continue;
-		}
+    if (cols.length !== 5 && cols.length !== 6) {
+      skipped.push({ rowIndex: i, raw, reason: `Expected 5 or 6 columns, got ${cols.length}.` });
+      continue;
+    }
 
-		const [rawDate, rawCourseName, rawCourseRating, rawSlopeRating, rawScore, rawNineHole] = cols.map((c) => c.trim());
+    const [rawDate, rawCourseName, rawCourseRating, rawSlopeRating, rawScore, rawNineHole] = cols.map((c) => c.trim());
 
-		const date = parseDate(rawDate);
-		if (!date) {
-			skipped.push({ rowIndex: i, raw, reason: `Invalid date "${rawDate}". Expected M/D/YYYY.` });
-			continue;
-		}
+    const date = parseDate(rawDate);
+    if (!date) {
+      skipped.push({ rowIndex: i, raw, reason: `Invalid date "${rawDate}". Expected M/D/YYYY.` });
+      continue;
+    }
 
-		if (!rawCourseName) {
-			skipped.push({ rowIndex: i, raw, reason: "Course name is empty." });
-			continue;
-		}
+    if (!rawCourseName) {
+      skipped.push({ rowIndex: i, raw, reason: "Course name is empty." });
+      continue;
+    }
 
-		const courseRating = parseFloat(rawCourseRating);
-		if (isNaN(courseRating)) {
-			skipped.push({ rowIndex: i, raw, reason: `Invalid course rating "${rawCourseRating}". Must be a number.` });
-			continue;
-		}
+    const courseRating = parseFloat(rawCourseRating);
+    if (isNaN(courseRating)) {
+      skipped.push({ rowIndex: i, raw, reason: `Invalid course rating "${rawCourseRating}". Must be a number.` });
+      continue;
+    }
 
-		const slopeRating = parseInt(rawSlopeRating, 10);
-		if (isNaN(slopeRating)) {
-			skipped.push({ rowIndex: i, raw, reason: `Invalid slope rating "${rawSlopeRating}". Must be a whole number.` });
-			continue;
-		}
+    const slopeRating = parseInt(rawSlopeRating, 10);
+    if (isNaN(slopeRating)) {
+      skipped.push({ rowIndex: i, raw, reason: `Invalid slope rating "${rawSlopeRating}". Must be a whole number.` });
+      continue;
+    }
 
-		const score = parseInt(rawScore, 10);
-		if (isNaN(score)) {
-			skipped.push({ rowIndex: i, raw, reason: `Invalid score "${rawScore}". Must be a whole number.` });
-			continue;
-		}
+    const score = parseInt(rawScore, 10);
+    if (isNaN(score)) {
+      skipped.push({ rowIndex: i, raw, reason: `Invalid score "${rawScore}". Must be a whole number.` });
+      continue;
+    }
 
-		if (
-			rawNineHole !== undefined &&
-			rawNineHole !== "" &&
-			!/^(true|yes|1)$/i.test(rawNineHole) &&
-			!/^(false|no|0)$/i.test(rawNineHole)
-		) {
-			skipped.push({
-				rowIndex: i,
-				raw,
-				reason: `Invalid 9-hole flag "${rawNineHole}". Expected true/false, yes/no, or 1/0.`,
-			});
-			continue;
-		}
-		const isNineHole = /^(true|yes|1)$/i.test(rawNineHole ?? "");
+    if (rawNineHole !== undefined && rawNineHole !== "" && !/^(true|yes|1)$/i.test(rawNineHole) && !/^(false|no|0)$/i.test(rawNineHole)) {
+      skipped.push({
+        rowIndex: i,
+        raw,
+        reason: `Invalid 9-hole flag "${rawNineHole}". Expected true/false, yes/no, or 1/0.`,
+      });
+      continue;
+    }
+    const isNineHole = /^(true|yes|1)$/i.test(rawNineHole ?? "");
 
-		imported.push({ id: crypto.randomUUID(), date, courseName: rawCourseName, courseRating, slopeRating, score, isNineHole });
-	}
+    imported.push({ id: crypto.randomUUID(), date, courseName: rawCourseName, courseRating, slopeRating, score, isNineHole });
+  }
 
-	return { imported, skipped };
+  return { imported, skipped };
 }
 
 export function useFileImport(onImport: (result: IFileImportResult) => void) {
-	const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-	const triggerFilePicker = React.useCallback(() => {
-		fileInputRef.current?.click();
-	}, []);
+  const triggerFilePicker = React.useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
-	const handleFileChange = React.useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			const file = e.target.files?.[0];
-			e.target.value = "";
-			if (!file) return;
-			const reader = new FileReader();
-			reader.onload = (evt) => {
-				const text = evt.target?.result;
-				if (typeof text !== "string") return;
-				onImport(parseFile(text));
-			};
-			reader.readAsText(file);
-		},
-		[onImport]
-	);
+  const handleFileChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const text = evt.target?.result;
+        if (typeof text !== "string") return;
+        onImport(parseFile(text));
+      };
+      reader.readAsText(file);
+    },
+    [onImport]
+  );
 
-	return { fileInputRef, triggerFilePicker, handleFileChange };
+  return { fileInputRef, triggerFilePicker, handleFileChange };
 }

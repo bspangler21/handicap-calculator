@@ -16,14 +16,14 @@ $$\text{Differential} = \frac{(\text{Score} - \text{Course Rating}) \times 113}{
 
 ## Tech stack
 
-| Layer | Technology |
-|---|---|
-| Framework | React 19 |
-| Language | TypeScript 5.9 |
-| Build tool | Vite 8 |
-| UI components | shadcn/ui v4 |
-| Styling | Tailwind CSS v4 |
-| Linting | ESLint 9 with `typescript-eslint` |
+| Layer         | Technology                        |
+| ------------- | --------------------------------- |
+| Framework     | React 19                          |
+| Language      | TypeScript 5.9                    |
+| Build tool    | Vite 8                            |
+| UI components | shadcn/ui v4                      |
+| Styling       | Tailwind CSS v4                   |
+| Linting       | ESLint 9 with `typescript-eslint` |
 
 ## Project structure
 
@@ -51,12 +51,12 @@ The app runs at `http://localhost:5173` by default.
 
 ## Available scripts
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Start the Vite dev server with hot module replacement |
-| `npm run build` | Type-check with `tsc` and produce a production build in `dist/` |
-| `npm run preview` | Serve the production build locally for verification |
-| `npm run lint` | Run ESLint across the entire project |
+| Command           | Purpose                                                         |
+| ----------------- | --------------------------------------------------------------- |
+| `npm run dev`     | Start the Vite dev server with hot module replacement           |
+| `npm run build`   | Type-check with `tsc` and produce a production build in `dist/` |
+| `npm run preview` | Serve the production build locally for verification             |
+| `npm run lint`    | Run ESLint across the entire project                            |
 
 ## Key implementation notes
 
