@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ModeToggle } from "@/components/ModeToggle";
 import { ImportResultMessageBar } from "@/components/ImportResultMessageBar";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,11 @@ import type { IEntry } from "@/types/IEntry";
 import type { IFileImportResult } from "@/types/IFileImportResult";
 import versionData from "@/version.json";
 import { Download, Plus, Upload } from "lucide-react";
-import { mockScores } from "./mockData/mockScores";
+import { mockScores } from "@/mockData/mockScores";
 import { EntryRow } from "@/components/EntryRow";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SORT_KEY_OPTIONS, SORT_ORDER_OPTIONS } from "@/types/sort";
+import { Label } from "@/components/ui/label";
 
 const mockEntries: IEntry[] = mockScores;
 const VERSION = `v1.0.${versionData.version}`;
@@ -32,6 +35,8 @@ export function App() {
   const [entries, setEntries] = React.useState<IEntry[]>(createInitialEntries);
   const [handicapVisible, setHandicapVisible] = React.useState(false);
   const [importResult, setImportResult] = React.useState<IFileImportResult | null>(null);
+  const [sortKey, setSortKey] = useState("date");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const handleImport = React.useCallback((result: IFileImportResult) => {
     setImportResult(result);
@@ -136,6 +141,43 @@ export function App() {
               to one decimal place.
             </p>
           </section>
+
+          <div className="flex h-[60px] items-center gap-4 rounded-lg border border-foreground bg-gray-400 px-2">
+            <Label className="text-muted">
+              Sort By
+              <Select items={SORT_KEY_OPTIONS} value={sortKey} onValueChange={(v) => setSortKey(v ?? "date")}>
+                <SelectTrigger className="w-[150px] bg-muted! text-muted-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {Object.entries(SORT_KEY_OPTIONS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Label>
+            <Label className="text-muted">
+              Sort Order
+              <Select items={SORT_ORDER_OPTIONS} value={sortOrder} onValueChange={(v) => setSortOrder(v ?? "asc")}>
+                <SelectTrigger className="w-[150px] bg-muted! text-muted-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {Object.entries(SORT_ORDER_OPTIONS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </Label>
+          </div>
 
           <section className="flex flex-1 flex-col">
             <div className="hidden w-full flex-row gap-10 px-1 py-1 sm:flex">
