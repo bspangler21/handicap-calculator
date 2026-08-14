@@ -54,5 +54,8 @@
   },
   "lint-staged": {
     "*.{js,ts,tsx,css,json,md}": "prettier --write"
+  },
+  "allowScripts": {
+    "msw@2.14.2": true
   }
 }

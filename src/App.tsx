@@ -142,41 +142,45 @@ export function App() {
             </p>
           </section>
 
-          <div className="flex h-[60px] items-center gap-4 rounded-lg border border-foreground bg-gray-400 px-2">
-            <Label className="text-muted">
-              Sort By
-              <Select items={SORT_KEY_OPTIONS} value={sortKey} onValueChange={(v) => setSortKey(v ?? "date")}>
-                <SelectTrigger className="w-[150px] bg-muted! text-muted-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {Object.entries(SORT_KEY_OPTIONS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Label>
-            <Label className="text-muted">
-              Sort Order
-              <Select items={SORT_ORDER_OPTIONS} value={sortOrder} onValueChange={(v) => setSortOrder(v ?? "asc")}>
-                <SelectTrigger className="w-[150px] bg-muted! text-muted-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {Object.entries(SORT_ORDER_OPTIONS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Label>
+          <div className="mb-2 grid min-h-[60px] w-full items-center gap-2 rounded-lg border border-foreground bg-gray-400 px-2 py-2 md:grid-cols-2">
+            <div className="flex items-center">
+              <Label className="flex w-full items-center text-sm text-muted">
+                <span className="w-[75px]">Sort By</span>
+                <Select items={SORT_KEY_OPTIONS} value={sortKey} onValueChange={(v) => setSortKey(v ?? "date")}>
+                  <SelectTrigger className="flex max-w-[250px] flex-1 bg-muted! text-muted-foreground">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {Object.entries(SORT_KEY_OPTIONS).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Label>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label className="flex items-center text-sm text-muted">
+                <span className="w-[75px]">Sort Order</span>
+                <Select items={SORT_ORDER_OPTIONS} value={sortOrder} onValueChange={(v) => setSortOrder(v ?? "asc")}>
+                  <SelectTrigger className="flex max-w-[250px] flex-1 bg-muted! text-muted-foreground">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      {Object.entries(SORT_ORDER_OPTIONS).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Label>
+            </div>
           </div>
 
           <section className="flex flex-1 flex-col">
