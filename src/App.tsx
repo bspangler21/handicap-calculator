@@ -142,7 +142,7 @@ export function App() {
             </p>
           </section>
 
-          <div className="mb-2 grid min-h-[60px] w-full items-center gap-2 rounded-lg border border-foreground bg-gray-400 px-2 py-2 sm:grid-cols-2">
+          <div className="mb-2 grid min-h-[60px] w-full items-center gap-2 rounded-lg border border-foreground bg-gray-400 px-2 py-2 sm:grid-cols-2 md:grid-cols-4">
             <div className="flex items-center justify-center">
               <Label className="flex w-full items-center text-sm text-muted">
                 <span className="w-[75px]">Sort By</span>
