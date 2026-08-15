@@ -142,12 +142,12 @@ export function App() {
             </p>
           </section>
 
-          <div className="mb-2 grid min-h-[60px] w-full items-center gap-2 rounded-lg border border-foreground bg-gray-400 px-2 py-2 sm:grid-cols-2 md:grid-cols-4">
+          <div className="mb-2 grid min-h-[60px] w-full grid-cols-2 items-center gap-4 rounded-lg border border-foreground bg-gray-400 px-2 py-2 md:flex md:flex-row">
             <div className="flex items-center justify-center">
               <Label className="flex w-full items-center text-sm text-muted">
                 <span className="w-[75px]">Sort By</span>
                 <Select items={SORT_KEY_OPTIONS} value={sortKey} onValueChange={(v) => setSortKey(v ?? "date")}>
-                  <SelectTrigger className="flex flex-1 bg-muted! text-muted-foreground md:max-w-[250px]">
+                  <SelectTrigger className="flex flex-1 bg-muted! text-muted-foreground md:max-w-[250px] md:min-w-[250px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -166,7 +166,7 @@ export function App() {
               <Label className="flex w-full items-center text-sm text-muted">
                 <span className="w-[75px]">Sort Order</span>
                 <Select items={SORT_ORDER_OPTIONS} value={sortOrder} onValueChange={(v) => setSortOrder(v ?? "asc")}>
-                  <SelectTrigger className="flex flex-1 bg-muted! text-muted-foreground md:max-w-[250px]">
+                  <SelectTrigger className="flex flex-1 bg-muted! text-muted-foreground md:max-w-[250px] md:min-w-[250px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
